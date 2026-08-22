@@ -1,36 +1,83 @@
-\section{Conclusiones}
-\label{conclusions}
+\section{Conclusiones y recomendaciones}
     \begin{itemize}
-        \item La visualización de datos es un componente del análisis y no una etapa
-        posterior, puesto que la asimetría global de 1,85 y la separación entre sectores
-        solo resultan interpretables al graficarlas.
+        \item El protocolo de contraste confirmó que el sector determina el consumo
+        energético de forma inequívoca, ya que el ANOVA atribuye el 83,9\,\% de la
+        variabilidad a ese factor ($F = 775{,}99$; $p < 0{,}001$) y las tres
+        comparaciones de Tukey resultan significativas, con diferencias de 244,3,
+        456,4 y 700,7 kWh entre pares de sectores.
 
-        \item Aplicar los principios de diseño es lo que convierte un gráfico en un
-        instrumento de análisis confiable, ya que la integridad gráfica, la razón
-        dato-tinta, el etiquetado completo, el color funcional, la escala honesta, el
-        ordenamiento significativo y la jerarquía visual se tradujeron en decisiones
-        concretas de código verificables línea por línea, de modo que la calidad del
-        diseño resulta medible y no una preferencia estética.
+        \vspace{10pt}
 
-        \item El contraste entre la torta defectuosa y las barras corregidas confirma la
-        importancia de esos principios, pues el mismo dato puede ser ilegible o
-        inmediato según la codificación visual elegida y la jerarquía de canales de
-        Cleveland y McGill proporciona el criterio objetivo para decidir la forma
-        gráfica adecuada.
+        \item La verificación de supuestos no fue un trámite sino una decisión de
+        método, puesto que el rechazo de la homogeneidad de varianzas obligó a
+        emplear la corrección de Welch en la comparación de medias; omitir ese paso
+        habría producido un valor $p$ calculado bajo un supuesto que los datos
+        contradicen.
 
-        \item El trabajo con los dos lenguajes muestra que los principios de diseño y
-        sus violaciones son independientes de la herramienta, ya que las réplicas en R
-        conservaron la escala honesta, el color funcional y la cuadrícula por detrás de
-        los datos mediante el trazado en dos pasadas, mientras que Matplotlib ofrece un
-        control de detalle más inmediato con parámetros como \texttt{axes.grid} y su
-        integración con \textit{pandas} y \textit{NumPy}.
+        \vspace{10pt}
 
-        \item La verificación cruzada entre Python y R constituye una práctica de
-        control de calidad de bajo costo y alto valor, pues las medias sectoriales, las
-        participaciones y la correlación de 0,998 recalculadas de forma independiente
-        coincidieron en ambos entornos, descartando errores de implementación.
+        \item El hallazgo central es que una prueba de hipótesis puede no rechazar
+        $H_0$ aunque el efecto exista, ya que la correlación temperatura-consumo
+        resulta no significativa a nivel agregado ($r = 0{,}063$; $p = 0{,}277$)
+        pese a haberse introducido por diseño, y sí lo es dentro del sector
+        Residencial ($r = 0{,}595$; $p < 0{,}001$).
 
-        \item Como hallazgo con implicación operativa, el 15\% de los clientes,
-        correspondiente al sector Industrial, concentra el 48,6\% del consumo total, una
-        concentración que solo se hace evidente en la representación corregida.
+        \vspace{10pt}
+
+        \item El mecanismo de esa discrepancia quedó cuantificado mediante la
+        relación $r = b_1 s_T / s_Y$, dado que la pendiente sobrevive a la
+        agregación ($b_1 = 3{,}42$ frente al valor de diseño de 4) mientras la
+        desviación estándar del consumo se triplica al mezclar sectores, de 40,6 a
+        317,5 kWh, diluyendo la correlación sin alterar el efecto subyacente.
+
+        \vspace{10pt}
+
+        \item La visualización fue el instrumento que hizo visible esa estructura,
+        puesto que la nube agregada de la Figura \ref{fig_regresion} muestra tres
+        franjas horizontales atravesadas por una recta que no describe a ninguna,
+        mientras que la figura interactiva de la Figura \ref{fig_plotly} revela tres
+        pendientes positivas paralelas que ningún estadístico agregado permite
+        anticipar.
+
+        \vspace{10pt}
+
+        \item La equivalencia entre Python y R, con coincidencia dígito a dígito en
+        Shapiro-Wilk, la t de Welch, el ANOVA, Tukey y la regresión, confirma que
+        los resultados dependen de los datos y no de la herramienta, y valida la
+        implementación de ambos scripts de forma independiente.
+    \end{itemize}
+
+    \vspace{10pt}
+
+    A partir de lo anterior se derivan tres recomendaciones para la toma de
+    decisiones:
+
+    \vspace{10pt}
+
+    \begin{itemize}
+        \item \textbf{Segmentar antes de promediar.} La media global de 501,98 kWh
+        no describe a ningún cliente real, ya que se sitúa entre el sector Comercial
+        y el Residencial sin representar a ninguno. Toda tarifa, meta de eficiencia
+        o proyección de demanda debe construirse por sector, decisión que los
+        intervalos de Tukey respaldan al excluir el cero con márgenes amplios y que
+        descarta cualquier esquema tarifario de dos escalones.
+
+        \vspace{10pt}
+
+        \item \textbf{Incorporar la temperatura como variable de planeación
+        únicamente en el segmento residencial.} Es el único donde la relación es a
+        la vez significativa y de magnitud apreciable ($r = 0{,}595$), lo que la
+        vuelve útil para anticipar picos de demanda en las regiones Caribe y
+        Pacífica; extender esa conclusión al conjunto agregado carecería de
+        sustento.
+
+        \vspace{10pt}
+
+        \item \textbf{Acompañar todo contraste con su representación gráfica antes
+        de aceptar un resultado no significativo.} Este trabajo muestra que un valor
+        $p$ elevado admite dos lecturas incompatibles, la ausencia de efecto y el
+        enmascaramiento por agregación, que el estadístico no distingue y la figura
+        sí. En conjuntos reales, donde la variable responsable de la agregación
+        puede no estar registrada, esa inspección visual es la única salvaguarda
+        disponible frente a una conclusión equivocada.
     \end{itemize}

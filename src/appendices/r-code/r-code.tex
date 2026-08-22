@@ -1,12 +1,10 @@
-\section{Código en R}
-\label{r_code}
-    El script de R implementa la verificación cruzada del análisis, pues lee el mismo
-    archivo CSV generado en Python, recalcula de forma independiente las medias
-    sectoriales, las participaciones y la correlación entre consumo y costo, y replica
-    con la graficación base las Figuras \ref{r_replicas_good} y
-    \ref{r_replicas_share}, trazando la cuadrícula en dos pasadas para mantenerla por
-    detrás de los datos.
+\section{Núcleo estadístico en R}
+    \label{anexo_r}
+    El script \textit{hypothesis\_testing.R} recalcula las cinco pruebas con las
+    funciones nativas de R sin reutilizar ningún valor de Python, y produce las
+    cifras de la columna derecha de la Tabla \ref{verificacion}. Se omite el bloque
+    de las réplicas en ggplot2 por razones de extensión.
 
     \vspace{10pt}
 
-    \lstinputlisting[style=Rstyle]{utils/codes/r/visualizations.R}
+    \lstinputlisting[style=rlang]{utils/codes/hypothesis_testing_core.R}

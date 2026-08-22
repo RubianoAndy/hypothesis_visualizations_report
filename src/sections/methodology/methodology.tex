@@ -1,47 +1,140 @@
 \section{Metodología}
-\label{methodology}
+    El desarrollo se implementó en dos scripts independientes: \textit{Python}
+    genera el conjunto de datos, ejecuta las cinco pruebas y produce las figuras;
+    \textit{R} lee el mismo archivo y recalcula todo desde cero, de modo que
+    cualquier discrepancia delataría un error de implementación. El núcleo
+    estadístico de ambos se reproduce en los Anexos \ref{anexo_python} y
+    \ref{anexo_r}. Todas las pruebas usan $\alpha = 0{,}05$.
+
     \subsection{Conjunto de datos}
-    \label{dataset}
-        Se simula un dataset de consumo energético mensual de 120 clientes de una
-        empresa distribuidora, asignando probabilidades de 0,50 (Residencial), 0,30
-        (Comercial) y 0,20 (Industrial). El consumo se genera a partir de
-        distribuciones normales con parámetros propios de cada sector y el costo se
-        obtiene del consumo mediante una tarifa diferenciada por sector más un ruido
-        multiplicativo del 4\% que simula variaciones de facturación, el conjunto de
-        datos contiene las siguientes variables:
+        Se emplea un conjunto simulado de consumo energético mensual de 300
+        clientes, 100 por cada sector, generado con semilla fija (42) para
+        garantizar la reproducibilidad. Las variables se resumen en la Tabla
+        \ref{dataset_variables}.
 
         \begin{table}[H]
             \centering
             \caption{Variables del conjunto de datos}
             \begin{center}
-                \footnotesize
-                \begin{tabular}{|l|>{\raggedright\arraybackslash}p{1.5cm}|>{\raggedright\arraybackslash}p{3.3cm}|}
+                \begin{tabular}{|l|l|>{\raggedright\arraybackslash}p{2.9cm}|}
                     \hline
                     \textbf{Variable} & \textbf{Tipo} & \textbf{Descripción} \\
                     \hline
-                    {\scriptsize\texttt{cliente\_id}} & Nominal & Identificador único del cliente (CL-001 a CL-120) \\
+                    id\_cliente & Nominal & Identificador único
+                    (CL-0001 a CL-0300) \\
                     \hline
-                    {\scriptsize\texttt{sector}} & Nominal & Residencial, Comercial o Industrial \\
+                    sector & Nominal & Residencial, Comercial o Industrial \\
                     \hline
-                    {\scriptsize\texttt{consumo\_kwh}} & Cuantitativa continua & Consumo mensual en kilovatios-hora \\
+                    region & Nominal & Andina, Caribe o Pacífica \\
                     \hline
-                    {\scriptsize\texttt{costo\_miles\_cop}} & Cuantitativa continua & Facturación mensual en miles de pesos colombianos \\
+                    temperatura\_c & Continua & Temperatura promedio del mes
+                    en \textdegree C \\
+                    \hline
+                    consumo\_kwh & Continua & Consumo mensual en
+                    kilovatios-hora \\
                     \hline
                 \end{tabular}
                 \label{dataset_variables}
             \end{center}
         \end{table}
 
-        El uso de datos simulados permite conocer las tres poblaciones con medias
-        separadas y una relación lineal consumo-costo, evaluando si cada gráfico la
-        revela o la oculta o si se presentan limitaciones.
+        El consumo se construye según la ecuación (\ref{generador}), donde
+        $\mu_s$ y $\sigma_s$ son la media y la desviación propias de cada sector y
+        $T_i$ la temperatura del cliente, cuya región se asigna con independencia
+        del sector.
 
-    \subsection{Flujo de trabajo y reproducibilidad}
-    \label{workflow}
-        De manera general, el flujo de trabajo inicia en Python, donde se genera el
-        conjunto de datos con semilla fija, se calcula la estadística descriptiva y se
-        producen las figuras bien diseñadas junto con una deliberadamente defectuosa;
-        posteriormente, en R se lee el mismo archivo CSV, se replican varias de las
-        gráficas recalculando los estadísticos para la verificación cruzada. Los
-        códigos completos que implementan este flujo se presentan en el Apéndice
-        \ref{python_code} para Python y en el Apéndice \ref{r_code} para R.
+        \begin{equation}
+            Y_i = \mathcal{N}(\mu_s, \sigma_s^2) + 4\,(T_i - 20)
+            \label{generador}
+        \end{equation}
+
+        El coeficiente 4 es el dato decisivo del experimento: la relación
+        temperatura consumo existe por diseño, es idéntica en los tres sectores y
+        su magnitud se conoce de antemano, lo que convierte al conjunto en un banco
+        de pruebas donde puede verificarse qué recupera cada estadístico. Los
+        sectores, en cambio, se separan por niveles muy distintos, con medias de
+        180, 420 y 900 kWh y desviaciones de 40, 90 y 180 kWh respectivamente.
+
+    \subsection{Diseño del contraste}
+        Las cinco hipótesis se resumen en la Tabla \ref{hipotesis}. Las dos primeras
+        no son un trámite previo sino que condicionan a las siguientes, ya que
+        determinan si las pruebas paramétricas son aplicables y bajo qué variante.
+
+        \begin{table}[H]
+            \centering
+            \caption{Hipótesis contrastadas e implementación}
+            \begin{center}
+                \begin{tabular}{|c|>{\raggedright\arraybackslash}p{2.4cm}|l|l|}
+                    \hline
+                    \textbf{\#} & \textbf{Hipótesis nula} & \textbf{Python} &
+                    \textbf{R} \\
+                    \hline
+                    1 & El consumo de cada sector es normal & \texttt{shapiro} &
+                    \texttt{shapiro.test} \\
+                    \hline
+                    2 & Las varianzas son homogéneas & \texttt{levene} &
+                    \texttt{bartlett.test} \\
+                    \hline
+                    3 & $\mu_{Res} = \mu_{Com}$ & \texttt{ttest\_ind} &
+                    \texttt{t.test} \\
+                    \hline
+                    4 & $\mu_{Res} = \mu_{Com} = \mu_{Ind}$ & \texttt{anova\_lm} &
+                    \texttt{aov} \\
+                    \hline
+                    5 & $\rho_{T,Y} = 0$ & \texttt{pearsonr} &
+                    \texttt{cor.test} \\
+                    \hline
+                \end{tabular}
+                \label{hipotesis}
+            \end{center}
+        \end{table}
+
+        La comparación de dos medias emplea el estadístico de la ecuación
+        (\ref{welch}), que no asume varianzas iguales y ajusta los grados de
+        libertad mediante la aproximación de Welch-Satterthwaite
+        \cite{welch1947generalization}.
+
+        \begin{equation}
+            t = \frac{\bar{x}_1 - \bar{x}_2}
+                     {\sqrt{\dfrac{s_1^2}{n_1} + \dfrac{s_2^2}{n_2}}}
+            \label{welch}
+        \end{equation}
+
+        Para tres o más grupos se recurre al ANOVA de un factor, cuyo estadístico
+        de la ecuación (\ref{anova}) contrasta la variabilidad entre grupos frente
+        a la que existe dentro de ellos \cite{montgomery2020design}.
+
+        \begin{equation}
+            F = \frac{SC_{entre} / (k-1)}{SC_{dentro} / (N-k)}
+            \label{anova}
+        \end{equation}
+
+        Un $F$ significativo indica que al menos una media difiere, pero no cuál,
+        por lo que se aplica el post-hoc de Tukey de la ecuación (\ref{tukey}), que
+        controla la tasa de error por familia al examinar las tres comparaciones
+        por pares \cite{tukey1949comparing}.
+
+        \begin{equation}
+            HSD = q_{\alpha,k,N-k} \sqrt{\frac{CM_{dentro}}{n}}
+            \label{tukey}
+        \end{equation}
+
+        Por último, la relación entre temperatura y consumo se evalúa con el
+        coeficiente de Pearson de la ecuación (\ref{pearson})
+        \cite{pearson1895regression} y con la recta de regresión estimada por
+        mínimos cuadrados de la ecuación (\ref{ols}).
+
+        \begin{equation}
+            r = \frac{\sum (T_i - \bar{T})(Y_i - \bar{Y})}
+                     {\sqrt{\sum (T_i - \bar{T})^2 \sum (Y_i - \bar{Y})^2}}
+            \label{pearson}
+        \end{equation}
+
+        \begin{equation}
+            \hat{Y} = b_0 + b_1 T
+            \label{ols}
+        \end{equation}
+
+        Ambas cantidades se calculan a nivel global y, de forma separada, dentro de
+        cada sector. Esa doble mirada es la que permite detectar el efecto de la
+        agregación que se analiza en la Sección \ref{seccion_visualizacion}.

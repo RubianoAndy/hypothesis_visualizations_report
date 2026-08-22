@@ -1,39 +1,67 @@
 \section{Introducción}
-\label{introduction}
-    La visualización de datos es el proceso de codificar información cuantitativa y
-    cualitativa a partir de artefactos u objetos visuales con el fin de aprovechar la
-    percepción humana para detectar patrones que una tabla numérica no es capaz de
-    revelar \cite{cleveland1984graphical}, \cite{few2012show}, \cite{toro2022ciencia}.
-    Su aporte a la ciencia de datos es grande, puesto que permite descubrir la
-    estructura, los agrupamientos, los valores atípicos y los errores, convirtiendo los
-    hallazgos analíticos en argumentos de fácil interpretación para las audiencias no
-    técnicas, que son generalmente las que toman las decisiones
-    \cite{timbers2024data}.
+    Una prueba de hipótesis es el procedimiento formal mediante el cual una
+    afirmación sobre una población se somete a la evidencia de una muestra,
+    formulando una hipótesis nula $H_0$ que se mantiene mientras los datos no
+    aporten evidencia suficiente en su contra, y una alternativa $H_1$ que recoge
+    aquello que se pretende demostrar \cite{montgomery2020design},
+    \cite{walpole2012probabilidad}. La decisión se toma comparando el valor $p$
+    con un nivel de significancia $\alpha$ fijado de antemano, de modo que el
+    procedimiento controla explícitamente la probabilidad de rechazar una hipótesis
+    verdadera \cite{montgomery2020design}.
 
     \vspace{10pt}
 
-    Este documento tiene como objetivo sustentar la importancia de la visualización en
-    la ciencia de datos, motivado por el caso clásico conocido como el cuarteto de
-    Anscombe, el cual tiene cuatro datasets con idéntica media, varianza, correlación y
-    recta de regresión, pero con estructuras radicalmente distintas que solo se hacen
-    evidentes al graficarlos \cite{tufte2001visual}. Sobre esa base, el informe aplica
-    los principios de diseño a un conjunto de datos simulado de consumo energético
-    mensual, con visualizaciones construidas en Matplotlib y replicadas en R.
+    Ese control es también su límite. El valor $p$ cuantifica cuán compatibles son
+    los datos con $H_0$, pero no mide la magnitud del efecto ni la importancia
+    práctica del hallazgo, y menos aún revela si el modelo empleado describe
+    razonablemente la estructura de los datos \cite{wasserstein2016asa}. Una prueba
+    puede no rechazar $H_0$ porque el efecto no existe, o porque existe y algo lo
+    está enmascarando; el estadístico devuelve el mismo número en ambos casos. Esta
+    ambigüedad es precisamente donde la visualización deja de ser un adorno del
+    informe y se convierte en un instrumento de diagnóstico \cite{few2012show},
+    \cite{castro2026visualizacion}.
 
     \vspace{10pt}
 
-    Ahora bien, no toda visualización es neutral, puesto que una mal construida
-    distorsiona la información, por ejemplo, un gráfico con ejes truncados, áreas
-    tridimensionales innecesarias o color meramente decorativo puede inducir
-    conclusiones erróneas con más eficacia que una tabla confusa, porque el lector
-    tiende a confiar en lo que ve, de ahí que el diseño gráfico correcto no sea una
-    cuestión estética, sino de integridad analítica \cite{few2012show},
-    \cite{tufte2001visual}.
+    El caso clásico que ilustra el riesgo es el cuarteto de Anscombe, cuatro
+    conjuntos de datos con media, varianza, correlación y recta de regresión
+    idénticas pero estructuras radicalmente distintas, que solo se distinguen al
+    graficarlos \cite{anscombe1973graphs}. Su versión más frecuente en datos reales
+    es la agregación de subpoblaciones: cuando observaciones procedentes de grupos
+    con niveles distintos se analizan como una sola muestra, la asociación medida
+    sobre el conjunto puede atenuarse e incluso invertirse respecto de la que existe
+    dentro de cada grupo, fenómeno emparentado con la paradoja de Simpson
+    \cite{kievit2013simpson}, \cite{simpson1951interpretation}.
 
     \vspace{10pt}
 
-    En ese doble carácter, el poder revelador de los gráficos y el riesgo de su mal
-    uso, se centra este trabajo, que presenta los principios de visualización de datos
-    y de diseño de gráficos necesarios para construir representaciones fieles,
-    efectivas y de fácil interpretación, al servicio del análisis y de la toma de
-    decisiones.
+    Este informe construye ese escenario de forma controlada. Sobre un conjunto
+    simulado de consumo energético mensual de 300 clientes repartidos en tres
+    sectores con escalas muy distintas, se aplica un protocolo completo de
+    inferencia que incluye la verificación de supuestos, la comparación de dos y de
+    tres medias, y el análisis de la relación entre el consumo y la temperatura
+    ambiente. La ventaja de simular los datos es que la relación temperatura
+    consumo se introduce por diseño con una magnitud conocida, de manera que puede
+    contrastarse qué recupera cada prueba y qué deja escapar.
+
+    \vspace{10pt}
+
+    El análisis se implementa en Python con \textit{SciPy} \cite{virtanen2020scipy}
+    y \textit{statsmodels} \cite{seabold2010statsmodels}, y se replica de forma
+    independiente en R con sus funciones nativas \cite{rcore2024r}, lo que permite
+    verificar que las cifras reportadas no dependen de la herramienta. Cada prueba
+    se acompaña de la figura que la representa, construidas con \textit{Matplotlib}
+    \cite{hunter2007matplotlib}, \textit{seaborn} \cite{waskom2021seaborn},
+    \textit{Plotly} \cite{plotly2015} y \textit{ggplot2} \cite{wickham2016ggplot2}.
+
+    \vspace{10pt}
+
+    El propósito del trabajo es responder una pregunta metodológica concreta:
+    ¿cuándo un valor $p$ no significativo autoriza a concluir que no hay relación,
+    y qué papel cumple la visualización en distinguir esa situación de aquella en la
+    que la relación existe pero está oculta por la estructura de los datos? Para
+    ello se plantean cuatro objetivos: formular y contrastar cinco hipótesis con la
+    prueba adecuada a cada caso, verificar sus supuestos antes de aplicarlas,
+    representar cada resultado con la visualización correspondiente incluyendo una
+    versión interactiva, e interpretar los hallazgos en términos de decisión y no
+    solo de significancia.

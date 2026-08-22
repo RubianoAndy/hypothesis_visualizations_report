@@ -1,12 +1,21 @@
-\section{Código en Python}
-\label{python_code}
-    El script de Python implementa la primera etapa del flujo, ya que genera el conjunto
-    de datos simulado con semilla fija para garantizar la reproducibilidad, calcula con
-    \textit{pandas} la estadística descriptiva y produce con Matplotlib las figuras bien
-    diseñadas de las subsecciones \ref{good_charts} y \ref{critical_analysis}, junto con
-    la versión deliberadamente
-    defectuosa del gráfico de torta, exportando cada imagen en PNG de alta resolución.
+\section{Núcleo estadístico en Python}
+    \label{anexo_python}
+    Se reproduce el bloque de \textit{hypothesis\_testing.py} que implementa las
+    cinco pruebas con \textit{SciPy} y \textit{statsmodels}. Se omiten la generación
+    del conjunto de datos y el código de las figuras 1 a 4 por razones de extensión;
+    el script completo está disponible en el repositorio del proyecto.
 
     \vspace{10pt}
 
-    \lstinputlisting[language=Python]{utils/codes/python/visualizations.py}
+    \lstinputlisting[style=python]{utils/codes/hypothesis_testing_core.py}
+
+    \vspace{10pt}
+
+    La figura interactiva de la Figura \ref{fig_plotly} se construye con
+    \textit{Plotly Express}, cuyo argumento \texttt{trendline} delega el ajuste de
+    la recta por grupo en \textit{statsmodels}, de modo que las pendientes de la
+    Tabla \ref{atenuacion} y las dibujadas en la figura proceden del mismo cálculo.
+
+    \vspace{10pt}
+
+    \lstinputlisting[style=python]{utils/codes/plotly_figure.py}
