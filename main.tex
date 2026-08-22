@@ -1,0 +1,151 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage[spanish]{babel}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{array}     % columnas p{} con \raggedright, para tablas a una columna
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{cuted}     % entorno strip: bloque a doble columna que no flota
+\usepackage{capt-of}   % \captionof, para rotular dentro de un strip
+\usepackage{tcolorbox}
+\usepackage{eso-pic}
+\usepackage{transparent}
+\usepackage{hyperref}  % debe cargarse de último para no duplicar anclas de floats
+
+\pagestyle{plain}
+
+\newif\ifshowwatermark
+\showwatermarktrue
+\AddToShipoutPictureBG{%
+    \ifshowwatermark
+        \AtPageCenter{%
+            \makebox(0,0){%
+                \transparent{0.18}%
+                \includegraphics[width=1.0\textwidth]{assets/images/Logo}%
+            }%
+        }%
+    \fi
+}
+
+\lstset{
+    language=Python,
+    columns=fullflexible,
+    basicstyle=\ttfamily\scriptsize\color[RGB]{30,30,30},
+    keywordstyle=\bfseries\color[RGB]{0,90,160},
+    commentstyle=\itshape\color[RGB]{100,100,100},
+    stringstyle=\color[RGB]{160,60,0},
+    numberstyle=\tiny\color[RGB]{150,150,150},
+    numbers=left,
+    numbersep=8pt,
+    stepnumber=1,
+    backgroundcolor=\color[RGB]{248,248,252},
+    frame=none,
+    showstringspaces=false,
+    breaklines=true,
+    breakatwhitespace=false,
+    tabsize=4,
+    captionpos=b,
+    xleftmargin=15pt,
+    xrightmargin=5pt,
+    inputencoding=utf8,
+    extendedchars=true,
+    literate=
+        {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+        {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+        {ñ}{{\~n}}1 {Ñ}{{\~N}}1
+        {°}{{\textdegree}}1
+        {¨}{}1,
+    morekeywords={np, plt, axes, fig}
+}
+
+% Estilo específico para los listados de R del Apéndice B.
+\lstdefinestyle{Rstyle}{
+    language=R,
+    morekeywords={png, dev.off, par, boxplot, barplot, legend, grid, points,
+                  abline, aggregate, sprintf, file.path, dir.exists, dir.create,
+                  read.csv, head, str, plot, pie, text, lm, cor, order, sum, rep, c},
+}
+
+% Tabla a doble columna continua a la narrativa: se imprime en el punto exacto
+% del texto en lugar de flotar al inicio de la página, como haría table*.
+% Las figuras usan figure[H] a una columna, que tampoco flota pero además pasa
+% entera a la página siguiente cuando no cabe, en vez de partirse.
+\newenvironment{widetable}
+    {\begin{strip}\centering}
+    {\end{strip}}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\renewcommand{\refname}{Referencias}
+
+\addto\captionsspanish{%
+    \renewcommand{\tablename}{Tabla}%
+    \renewcommand{\lstlistingname}{Código}%
+}
+
+\begin{document}
+    \raggedbottom
+    \bstctlcite{IEEEtran:BSTcontrol}
+
+    \title{
+        Introducción a la visualización de datos y principios de diseño de gráficos:
+        aplicación sobre consumo energético con Matplotlib y R
+    }
+
+    \author{\IEEEauthorblockN{
+        Andrés Giovanny Rubiano Muñoz ``Andy Rubiano''}
+        \IEEEauthorblockA{
+            \textit{Maestría en Inteligencia Artificial, Facultad de Ingeniería} \\
+            \textit{Universidad de La Salle} \\
+            Bogotá, Colombia \\
+            arubiano67@unisalle.edu.co
+        }
+    }
+
+    \maketitle
+    \thispagestyle{plain}
+
+    \begin{abstract}
+        El presente informe analiza la importancia de la visualización de 
+        datos en la ciencia de datos y los principios de diseño que permiten
+        diferenciar una representación clara de una potencialmente engañosa,
+        tomando como referencia los criterios de Cleveland y McGill, Tufte y 
+        Few sobre un conjunto simulado de consumo energético de 120 clientes,
+        distribuidos en los sectores Residencial, Comercial e Industrial,
+        construyendo cinco visualizaciones en Matplotlib y una representación
+        deliberadamente defectuosa, además de replicar cuatro gráficos en R como
+        verificación cruzada. Los resultados evidencian una asimetría de 1,85 en
+        la distribución del consumo, una relación de 10,7 veces entre el consumo
+        industrial y residencial promedio y una correlación de Pearson de 0,998
+        entre consumo y costo. Asimismo, el sector Industrial, con el 15\% de
+        los clientes, concentra el 48,6\% del consumo total. La comparación
+        entre Python y R produjo resultados consistentes, confirmando que la
+        calidad de una visualización depende principalmente de sus principios de
+        diseño y no de la herramienta utilizada.
+    \end{abstract}
+
+    \vspace{10pt}
+
+    \begin{IEEEkeywords}
+        Visualización de datos, principios de diseño de gráficos, percepción gráfica,
+        canales visuales, integridad gráfica, Matplotlib, R, ciencia de datos.
+    \end{IEEEkeywords}
+
+    \input{src/sections/introduction/introduction.tex}
+    \input{src/sections/fundamentals/fundamentals.tex}
+    \input{src/sections/design-principles/design-principles.tex}
+    \input{src/sections/tools-comparison/tools-comparison.tex}
+    \input{src/sections/methodology/methodology.tex}
+    \input{src/sections/results/results.tex}
+    \input{src/sections/conclusions/conclusions.tex}
+
+    \appendices
+    \input{src/appendices/python-code/python-code.tex}
+    \input{src/appendices/r-code/r-code.tex}
+
+    \bibliographystyle{IEEEtran}
+    \bibliography{utils/references/references.bib}
+\end{document}

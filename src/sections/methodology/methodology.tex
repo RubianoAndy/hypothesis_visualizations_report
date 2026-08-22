@@ -1,0 +1,47 @@
+\section{Metodología}
+\label{methodology}
+    \subsection{Conjunto de datos}
+    \label{dataset}
+        Se simula un dataset de consumo energético mensual de 120 clientes de una
+        empresa distribuidora, asignando probabilidades de 0,50 (Residencial), 0,30
+        (Comercial) y 0,20 (Industrial). El consumo se genera a partir de
+        distribuciones normales con parámetros propios de cada sector y el costo se
+        obtiene del consumo mediante una tarifa diferenciada por sector más un ruido
+        multiplicativo del 4\% que simula variaciones de facturación, el conjunto de
+        datos contiene las siguientes variables:
+
+        \begin{table}[H]
+            \centering
+            \caption{Variables del conjunto de datos}
+            \begin{center}
+                \footnotesize
+                \begin{tabular}{|l|>{\raggedright\arraybackslash}p{1.5cm}|>{\raggedright\arraybackslash}p{3.3cm}|}
+                    \hline
+                    \textbf{Variable} & \textbf{Tipo} & \textbf{Descripción} \\
+                    \hline
+                    {\scriptsize\texttt{cliente\_id}} & Nominal & Identificador único del cliente (CL-001 a CL-120) \\
+                    \hline
+                    {\scriptsize\texttt{sector}} & Nominal & Residencial, Comercial o Industrial \\
+                    \hline
+                    {\scriptsize\texttt{consumo\_kwh}} & Cuantitativa continua & Consumo mensual en kilovatios-hora \\
+                    \hline
+                    {\scriptsize\texttt{costo\_miles\_cop}} & Cuantitativa continua & Facturación mensual en miles de pesos colombianos \\
+                    \hline
+                \end{tabular}
+                \label{dataset_variables}
+            \end{center}
+        \end{table}
+
+        El uso de datos simulados permite conocer las tres poblaciones con medias
+        separadas y una relación lineal consumo-costo, evaluando si cada gráfico la
+        revela o la oculta o si se presentan limitaciones.
+
+    \subsection{Flujo de trabajo y reproducibilidad}
+    \label{workflow}
+        De manera general, el flujo de trabajo inicia en Python, donde se genera el
+        conjunto de datos con semilla fija, se calcula la estadística descriptiva y se
+        producen las figuras bien diseñadas junto con una deliberadamente defectuosa;
+        posteriormente, en R se lee el mismo archivo CSV, se replican varias de las
+        gráficas recalculando los estadísticos para la verificación cruzada. Los
+        códigos completos que implementan este flujo se presentan en el Apéndice
+        \ref{python_code} para Python y en el Apéndice \ref{r_code} para R.

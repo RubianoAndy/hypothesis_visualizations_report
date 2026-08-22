@@ -1,0 +1,70 @@
+\section{Conceptos fundamentales de la visualización de datos}
+\label{fundamentals}
+    \subsection{Codificación visual y tipo de variable}
+    \label{visual_encoding}
+        Toda visualización es una función que asigna valores de datos a atributos
+        gráficos que depende del tipo de variable, algunas de ellas son: las variables
+        nominales (como el sector del cliente) admiten codificación por posición
+        categórica, forma o matiz de color, pero no por longitud continua, las ordinales
+        exigen una codificación que preserve el orden y las cuantitativas (consumo en
+        kWh, costo en COP) que admiten posición, longitud y área con precisiones muy
+        distintas entre sí \cite{castro2026ciencia}.
+
+    \subsection{Jerarquía de precisión de los canales visuales}
+    \label{visual_channels}
+        El aporte experimental de Cleveland y McGill es la base cuantitativa del diseño
+        gráfico moderno, puesto que, al medir el error en la estimación de magnitudes,
+        se establece el ordenamiento de precisión decreciente
+        \cite{cleveland1984graphical}, el cual se da de la siguiente manera:
+
+        \vspace{10pt}
+
+        \begin{itemize}
+            \item Posición sobre una escala común (gráficos de dispersión, barras
+            alineadas).
+
+            \item Posición sobre escalas no alineadas (paneles múltiples).
+
+            \item Longitud (barras).
+
+            \item Ángulo y pendiente (gráficos de torta).
+
+            \item Área (burbujas).
+
+            \item Volumen, curvatura y saturación de color.
+        \end{itemize}
+
+    \subsection{Correspondencia entre tarea analítica y tipo de gráfico}
+    \label{task_chart_correspondence}
+        Elegir un tipo de gráfico no es una decisión estética, sino la respuesta a una
+        pregunta analítica concreta, ya que no es lo mismo examinar cómo se distribuye
+        una variable, que comparar magnitudes entre categorías o buscar la relación
+        entre dos medidas, por consiguiente, cada una de estas tareas tiene formas
+        gráficas que la responden con mayor precisión que otras, apoyándose en la
+        jerarquía de canales visuales descrita en la sección \ref{visual_channels},
+        sintetizando dicha correspondencia justificando la elección de la siguiente
+        manera:
+
+        \begin{table}[H]
+            \centering
+            \caption{Correspondencia entre tarea analítica y forma gráfica}
+            \begin{center}
+                \footnotesize
+                \begin{tabular}{|>{\raggedright\arraybackslash}p{1.9cm}|>{\raggedright\arraybackslash}p{1.7cm}|>{\raggedright\arraybackslash}p{2.9cm}|}
+                    \hline
+                    \textbf{Tarea analítica} & \textbf{Gráfico} & \textbf{Canal y justificación} \\
+                    \hline
+                    Distribución de una variable & Histograma & Posición y longitud; revela asimetría y multimodalidad \\
+                    \hline
+                    Comparación entre categorías & Barras & Longitud sobre línea base común desde cero \\
+                    \hline
+                    Relación entre dos variables & Dispersión & Posición en dos escalas comunes \\
+                    \hline
+                    Dispersión y atípicos por grupo & Diagrama de caja & Posición; resume cinco estadísticos \\
+                    \hline
+                    Composición de un total & Barras horizontales ordenadas & Longitud; sustituye al ángulo de la torta \\
+                    \hline
+                \end{tabular}
+                \label{task_chart_mapping}
+            \end{center}
+        \end{table}

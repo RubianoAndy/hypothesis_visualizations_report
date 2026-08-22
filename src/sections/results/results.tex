@@ -1,0 +1,225 @@
+\section{Resultados}
+\label{results}
+    \subsection{Análisis estadístico descriptivo}
+    \label{descriptive_analysis}
+        Como punto de partida del análisis, la Tabla \ref{descriptive_statistics}
+        presenta la estadística descriptiva del consumo mensual (kWh) por sector y a
+        nivel global, calculada sobre los 120 clientes del conjunto de datos simulado.
+
+        \begin{table}[H]
+            \centering
+            \caption{Estadística descriptiva del consumo mensual (kWh) por sector}
+            \begin{center}
+                \scalebox{0.90}{
+                    \begin{tabular}{|l|c|c|c|c|c|c|}
+                        \hline
+                        \textbf{Sector} & \textbf{n} & \textbf{Media} & \textbf{Mediana} & \textbf{Desv. est.} & \textbf{Mín.} & \textbf{Máx.} \\
+                        \hline
+                        Residencial & 62 & 248,3 & 240,6 & 61,1 & 121,2 & 424,8 \\
+                        \hline
+                        Comercial & 40 & 878,1 & 866,6 & 207,3 & 430,9 & 1.339,3 \\
+                        \hline
+                        Industrial & 18 & 2.654,0 & 2.666,8 & 686,9 & 1.674,0 & 3.777,1 \\
+                        \hline
+                        Global & 120 & 819,1 & 378,6 & 873,8 & 121,2 & 3.777,1 \\
+                        \hline
+                    \end{tabular}
+                }
+                \label{descriptive_statistics}
+            \end{center}
+        \end{table}
+
+        Tres lecturas se desprenden de la tabla, primero, dentro de cada sector la
+        media y la mediana casi coinciden, lo que indica distribuciones simétricas a
+        nivel de grupo, segundo, el coeficiente de variación es notablemente homogéneo
+        entre sectores, donde la dispersión relativa del consumo es la misma, aunque la
+        escala absoluta difiera en un orden de magnitud, tercero, a nivel global la
+        media duplica a la mediana y la asimetría alcanza 1,85.
+
+    \subsection{Gráficos bien diseñados e interpretación}
+    \label{good_charts}
+        Con los principios de diseño de la sección \ref{design_principles} y siguiendo la Tabla
+        \ref{task_chart_mapping}, se construyeron en Matplotlib cuatro visualizaciones
+        del conjunto de datos: un histograma de la distribución global del consumo, un
+        diagrama de barras del promedio por sector, un diagrama de caja por sector y un
+        gráfico de dispersión entre consumo y costo. Las figuras se presentan a
+        continuación en tres grupos, cada uno acompañado de su interpretación.
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\linewidth]{assets/images/figures/python/good_design/hist_consumption.png}\\
+            \vspace{2pt}
+            {\small (a) Histograma de distribución global del consumo mensual}
+            \vspace{10pt}\\
+            \includegraphics[width=\linewidth]{assets/images/figures/python/good_design/bar_mean_consumption_by_sector.png}\\
+            \vspace{2pt}
+            {\small (b) Diagrama de barras del consumo promedio por sector}
+            \caption{Distribución y comparación del consumo mensual entre sectores}
+            \label{distribution_and_comparison}
+        \end{figure}
+
+        La Figura \ref{distribution_and_comparison}a muestra la distribución global del
+        consumo, con una concentración densa por debajo de los 500 kWh y una cola larga
+        que se extiende hasta cerca de 3.800 kWh, lo que indica que no se trata de una
+        única población con valores atípicos, sino de la superposición de tres grupos
+        con escalas distintas. La Figura \ref{distribution_and_comparison}b descompone
+        esa mezcla al comparar las medias sectoriales, donde el consumo industrial
+        promedio es aproximadamente 10,7 veces el residencial.
+
+        \vspace{10pt}
+
+        Ambas figuras materializan los principios de diseño, ya que el histograma
+        examina la distribución codificando por posición y longitud, los canales de
+        mayor precisión en la jerarquía de Cleveland y McGill
+        \cite{cleveland1984graphical}, y emplea un color único porque solo hay una
+        variable cuantitativa, mientras que el diagrama de barras compara por longitud
+        sobre un eje que parte de cero, ordena las categorías por magnitud e imprime la
+        etiqueta numérica sobre cada barra, y en ambas el título informativo, los ejes
+        rotulados en kWh y la cuadrícula discreta detrás de los datos hacen cada gráfico
+        autocontenido.
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\linewidth]{assets/images/figures/python/good_design/boxplot_consumption_by_sector.png}\\
+            \vspace{2pt}
+            {\small (a) Diagrama de caja del consumo por sector}
+            \vspace{10pt}\\
+            \includegraphics[width=\linewidth]{assets/images/figures/python/good_design/scatter_consumption_vs_cost.png}\\
+            \vspace{2pt}
+            {\small (b) Dispersión de consumo frente a costo mensual con línea de tendencia}
+            \caption{Variabilidad del consumo por sector y su relación con el costo mensual, elaboradas en Matplotlib}
+            \label{dispersion_and_relation}
+        \end{figure}
+
+        La Figura \ref{dispersion_and_relation}a revela la información que las medias
+        suprimen, es decir, la dispersión interna de cada grupo, donde los tres sectores
+        quedan claramente separados, sin traslape entre los rangos intercuartílicos y la
+        amplitud de las cajas crece con la escala del sector, en coherencia con el
+        coeficiente de variación constante observado en la Tabla
+        \ref{descriptive_statistics}, por su parte, la Figura
+        \ref{dispersion_and_relation}b examina la relación entre consumo y costo, cuya
+        correlación de Pearson es $r = 0{,}998$ ($R^{2} = 0{,}997$), una asociación
+        lineal casi perfecta consistente con un esquema tarifario proporcional al
+        consumo, sin embargo, la tarifa efectiva no es única, pues resulta de 0,820
+        miles de COP/kWh en el sector residencial, 0,710 en el comercial y 0,647 en el
+        industrial, mientras que la pendiente de la recta global es de 0,635, señal de
+        que la recta agregada está dominada por los clientes industriales y no describe
+        a ningún sector en particular.
+
+        \vspace{10pt}
+
+        El buen diseño de estas figuras también es verificable, puesto que el diagrama
+        de caja resume cinco estadísticos mediante posición, el canal más preciso, y el
+        gráfico de dispersión codifica por posición en dos escalas comunes, donde es
+        legítimo no partir de cero porque se lee por posición relativa, usando además el
+        color de manera funcional para distinguir el sector, que es una variable
+        nominal.
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\linewidth]{assets/images/figures/r/good_design/boxplot_consumption_by_sector.png}\\
+            \vspace{2pt}
+            {\small (a) Réplica en R del diagrama de caja del consumo por sector}
+            \vspace{10pt}\\
+            \includegraphics[width=\linewidth]{assets/images/figures/r/good_design/scatter_consumption_vs_cost.png}\\
+            \vspace{2pt}
+            {\small (b) Réplica en R de la dispersión de consumo frente a costo mensual}
+            \caption{Réplicas en R del diagrama de caja y de la dispersión, como verificación cruzada de la Figura \ref{dispersion_and_relation}}
+            \label{r_replicas_good}
+        \end{figure}
+
+        Las Figuras \ref{r_replicas_good}a y \ref{r_replicas_good}b, réplicas
+        construidas con la graficación base de R sobre el mismo conjunto de datos,
+        demuestran que estos principios son independientes del lenguaje, aunque la
+        cuadrícula debe trazarse en dos pasadas para quedar detrás de los datos, recurso
+        que Matplotlib resuelve directamente con el parámetro \texttt{axes.grid}, por lo
+        que el control de detalle resulta más inmediato en Python. La coincidencia de
+        los estadísticos recalculados en R, con medias sectoriales de 248,3, 878,1 y
+        2.654,0 kWh y una correlación de 0,998, descarta errores de implementación y
+        valida el análisis en los dos entornos \cite{castro2026ciencia}.
+
+    \subsection{Análisis crítico: gráfico mal diseñado frente a su corrección}
+    \label{critical_analysis}
+        Para contrastar buenas y malas prácticas se construyeron dos representaciones de
+        exactamente los mismos datos, la participación de cada sector en el consumo
+        total, junto con sus réplicas en R.
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\linewidth]{assets/images/figures/python/bad_design/pie_sector_share_bad.png}\\
+            \vspace{2pt}
+            {\small (a) Gráfico de torta con errores deliberados de diseño}
+            \vspace{10pt}\\
+            \includegraphics[width=\linewidth]{assets/images/figures/python/good_design/barh_sector_share.png}\\
+            \vspace{2pt}
+            {\small (b) Barras horizontales ordenadas con el diseño corregido}
+            \caption{Participación de cada sector en el consumo total, en sus versiones defectuosa y corregida, elaboradas en Matplotlib}
+            \label{bad_vs_good_design}
+        \end{figure}
+
+        La Figura \ref{bad_vs_good_design}a corresponde a un gráfico de torta que
+        acumula errores deliberados de diseño y cada uno de ellos viola un principio de
+        la sección \ref{design_principles}, como se detalla a continuación:
+
+        \vspace{10pt}
+
+        \begin{itemize}
+            \item \textbf{Título sin contexto}, puesto que el rótulo ``Consumo'' no
+            indica qué se mide, de quién ni en qué unidades, por lo que el gráfico no es
+            autocontenido.
+
+            \item \textbf{Ausencia de etiquetas de datos}, pues al no haber porcentajes
+            ni valores el lector debe estimar áreas a ojo, el canal menos preciso según
+            Cleveland y McGill.
+
+            \item \textbf{Comparación por ángulo y área}, donde los sectores Comercial
+            (35,7\%) e Industrial (48,6\%) difieren en menos de 13 puntos porcentuales,
+            una diferencia difícil de juzgar por ángulo.
+
+            \item \textbf{Colores saturados}, ya que el magenta, el cian y el amarillo
+            puro no codifican ninguna variable, son solo decoración generando fatiga
+            visual, lo que resulta problemático para lectores con deficiencias en la
+            percepción del color.
+
+            \item \textbf{Sombra y desplazamiento radial}, pues el efecto
+            \textit{explode} y la sombra alteran la percepción del tamaño relativo de
+            las porciones, aumentando el factor de mentira.
+
+            \item \textbf{Ángulo de inicio arbitrario}, ya que al iniciar el trazado en
+            17 grados se pierde la referencia vertical que facilitaría comparar contra
+            los cuartos de circunferencia.
+
+            \item \textbf{Leyenda desacoplada}, que obliga a un ir y venir entre la
+            leyenda y las porciones, consumiendo memoria de trabajo del lector.
+        \end{itemize}
+
+        \vspace{10pt}
+
+        La Figura \ref{bad_vs_good_design}b presenta la versión corregida en barras
+        horizontales ordenadas, que conserva los datos y cambia únicamente la
+        codificación, pues incorpora un título informativo, una escala de 0 a 100\% con
+        unidad explícita, categorías ordenadas por magnitud, un solo color, dado que
+        solo hay una variable cuantitativa, y el porcentaje impreso junto a cada barra,
+        con lo cual la lectura pasa de estimar ángulos a comparar longitudes alineadas y
+        revela que el sector Industrial, con apenas 18 de los 120 clientes (15\%),
+        concentra casi la mitad del consumo total.
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\linewidth]{assets/images/figures/r/bad_design/pie_sector_share_bad.png}\\
+            \vspace{2pt}
+            {\small (a) Réplica en R del gráfico de torta con errores deliberados}
+            \vspace{10pt}\\
+            \includegraphics[width=\linewidth]{assets/images/figures/r/good_design/barh_sector_share.png}\\
+            \vspace{2pt}
+            {\small (b) Réplica en R de las barras horizontales de participación}
+            \caption{Réplicas en R de la torta defectuosa y de su versión corregida, como verificación cruzada de la Figura \ref{bad_vs_good_design}}
+            \label{r_replicas_share}
+        \end{figure}
+
+        Las Figuras \ref{r_replicas_share}a y \ref{r_replicas_share}b replican en R la
+        torta defectuosa y la versión corregida, confirmando que tanto los errores como
+        la mejora son atribuibles al diseño y no a la herramienta, y la coincidencia de
+        las participaciones en los dos entornos, con 48,6\% para el sector Industrial,
+        35,7\% para el Comercial y 15,7\% para el Residencial, extiende al gráfico de
+        composición la verificación cruzada de la Figura \ref{r_replicas_good}.

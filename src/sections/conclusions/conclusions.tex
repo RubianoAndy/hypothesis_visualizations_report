@@ -1,0 +1,36 @@
+\section{Conclusiones}
+\label{conclusions}
+    \begin{itemize}
+        \item La visualización de datos es un componente del análisis y no una etapa
+        posterior, puesto que la asimetría global de 1,85 y la separación entre sectores
+        solo resultan interpretables al graficarlas.
+
+        \item Aplicar los principios de diseño es lo que convierte un gráfico en un
+        instrumento de análisis confiable, ya que la integridad gráfica, la razón
+        dato-tinta, el etiquetado completo, el color funcional, la escala honesta, el
+        ordenamiento significativo y la jerarquía visual se tradujeron en decisiones
+        concretas de código verificables línea por línea, de modo que la calidad del
+        diseño resulta medible y no una preferencia estética.
+
+        \item El contraste entre la torta defectuosa y las barras corregidas confirma la
+        importancia de esos principios, pues el mismo dato puede ser ilegible o
+        inmediato según la codificación visual elegida y la jerarquía de canales de
+        Cleveland y McGill proporciona el criterio objetivo para decidir la forma
+        gráfica adecuada.
+
+        \item El trabajo con los dos lenguajes muestra que los principios de diseño y
+        sus violaciones son independientes de la herramienta, ya que las réplicas en R
+        conservaron la escala honesta, el color funcional y la cuadrícula por detrás de
+        los datos mediante el trazado en dos pasadas, mientras que Matplotlib ofrece un
+        control de detalle más inmediato con parámetros como \texttt{axes.grid} y su
+        integración con \textit{pandas} y \textit{NumPy}.
+
+        \item La verificación cruzada entre Python y R constituye una práctica de
+        control de calidad de bajo costo y alto valor, pues las medias sectoriales, las
+        participaciones y la correlación de 0,998 recalculadas de forma independiente
+        coincidieron en ambos entornos, descartando errores de implementación.
+
+        \item Como hallazgo con implicación operativa, el 15\% de los clientes,
+        correspondiente al sector Industrial, concentra el 48,6\% del consumo total, una
+        concentración que solo se hace evidente en la representación corregida.
+    \end{itemize}
