@@ -138,3 +138,136 @@
         Ambas cantidades se calculan a nivel global y, de forma separada, dentro de
         cada sector. Esa doble mirada es la que permite detectar el efecto de la
         agregación que se analiza en la Sección \ref{seccion_visualizacion}.
+
+    \subsection{Magnitud del efecto y potencia}
+        \label{subsec_efecto}
+        Un valor $p$ responde si una diferencia es distinguible del azar, no si
+        importa; con $n = 100$ por grupo casi cualquier separación alcanza la
+        significancia, de modo que reportar únicamente el valor $p$ reproduce el
+        problema que advierte la declaración de la ASA \cite{wasserstein2016asa}.
+        Cada contraste se acompaña por ello de su tamaño de efecto
+        \cite{cohen1988statistical}, \cite{lakens2013calculating}. Para la
+        comparación de dos medias se emplea la $d$ de Cohen de la ecuación
+        (\ref{cohend}), con $s_p$ la desviación combinada, y su corrección de
+        sesgo $g$ de Hedges.
+
+        \begin{equation}
+            d = \frac{\bar{x}_1 - \bar{x}_2}{s_p}, \qquad
+            s_p = \sqrt{\frac{(n_1-1)s_1^2 + (n_2-1)s_2^2}{n_1 + n_2 - 2}}
+            \label{cohend}
+        \end{equation}
+
+        Para el ANOVA se reportan la proporción de varianza explicada $\eta^2$ y
+        su versión corregida $\omega^2$ de la ecuación (\ref{omega}), que
+        descuenta el sesgo optimista de la primera.
+
+        \begin{equation}
+            \eta^2 = \frac{SC_{entre}}{SC_{total}}, \qquad
+            \omega^2 = \frac{SC_{entre} - (k-1)\,CM_{dentro}}
+                            {SC_{total} + CM_{dentro}}
+            \label{omega}
+        \end{equation}
+
+        La potencia observada se calcula sobre la distribución no central
+        correspondiente a cada estadístico. A ella se añade un análisis de
+        sensibilidad sobre la quinta hipótesis: la correlación más pequeña
+        detectable con potencia $1-\beta = 0{,}80$ y $n$ observaciones se obtiene
+        invirtiendo la transformación de Fisher según la ecuación
+        (\ref{rdetectable}). Ese umbral separa dos explicaciones posibles de una
+        correlación no significativa, la falta de tamaño muestral y la pequeñez
+        real del coeficiente.
+
+        \begin{equation}
+            r_{\min} = \tanh\!\left(\frac{z_{1-\alpha/2} + z_{1-\beta}}
+                                         {\sqrt{n-3}}\right)
+            \label{rdetectable}
+        \end{equation}
+
+    \subsection{Contrastes robustos a la heterocedasticidad}
+        \label{subsec_robustez}
+        Tanto el ANOVA clásico como el post-hoc de Tukey asumen varianzas
+        iguales, supuesto que la segunda hipótesis rechaza. En lugar de dejar
+        constancia de ello como una limitación, todo el bloque de comparación de
+        medias se repite con los procedimientos que no lo exigen: el ANOVA de
+        Welch de la ecuación (\ref{welchanova}), que pondera cada grupo por
+        $w_i = n_i/s_i^2$ \cite{welch1951comparison}, y el post-hoc de
+        Games-Howell de la ecuación (\ref{gameshowell}), que sustituye el error
+        estándar común de Tukey por el de Welch en cada par y ajusta los grados
+        de libertad mediante Welch-Satterthwaite \cite{games1976pairwise}.
+
+        \begin{equation}
+            F_W = \frac{\dfrac{1}{k-1}\sum w_i (\bar{x}_i - \bar{x}_w)^2}
+                       {1 + \dfrac{2(k-2)}{k^2-1}\,\Lambda}
+            \label{welchanova}
+        \end{equation}
+
+        \begin{equation}
+            q_{ij} = \frac{|\bar{x}_i - \bar{x}_j|}
+                          {\sqrt{\dfrac{1}{2}\left(\dfrac{s_i^2}{n_i}
+                                 + \dfrac{s_j^2}{n_j}\right)}}
+            \label{gameshowell}
+        \end{equation}
+
+        Si ambos procedimientos conducen a la misma decisión, la conclusión queda
+        respaldada con independencia del supuesto; si divergieran, habría que
+        reportar la versión robusta. El resultado de esa comprobación se presenta
+        en la Sección \ref{subsec_robustez_resultados}.
+
+    \subsection{Plan de visualización}
+        \label{subsec_plan_visual}
+        Cada hipótesis contrastada tiene asignada al menos una figura, y cada
+        figura lleva impreso el estadístico y el valor $p$ que representa, de modo
+        que pueda leerse sin emparejarla con la tabla correspondiente. Las nueve
+        figuras se construyen dos veces, en Python y en R, sobre estadísticos
+        calculados de forma independiente en cada entorno. La Tabla
+        \ref{plan_figuras} resume esa correspondencia entre hipótesis, biblioteca
+        y figura.
+
+        \begin{table}[H]
+            \centering
+            \caption{Correspondencia entre hipótesis, biblioteca y figura}
+            \begin{center}
+                \begin{tabular}{|c|>{\raggedright\arraybackslash}p{2.05cm}|l|c|}
+                    \hline
+                    \textbf{\#} & \textbf{Figura} & \textbf{Biblioteca} &
+                    \textbf{Ref.} \\
+                    \hline
+                    1 & Histograma con normal teórica & Matplotlib / ggplot2 &
+                    \ref{fig_normalidad} \\
+                    \hline
+                    1 & Q-Q por sector & Matplotlib / ggplot2 &
+                    \ref{fig_qq} \\
+                    \hline
+                    2 & Violín con caja y puntos & seaborn / ggplot2 &
+                    \ref{fig_boxplot} \\
+                    \hline
+                    3 & Medias con IC del 95\,\% & Matplotlib / ggplot2 &
+                    \ref{fig_medias} \\
+                    \hline
+                    4 & Forest de Tukey y Games-Howell & Matplotlib / ggplot2 &
+                    \ref{fig_forest} \\
+                    \hline
+                    5 & Dispersión global con recta OLS & seaborn / ggplot2 &
+                    \ref{fig_regresion} \\
+                    \hline
+                    5 & Dispersión por sector \textbf{interactiva} &
+                    Plotly / ggplotly & \ref{fig_plotly} \\
+                    \hline
+                    5 & Descomposición de la atenuación & seaborn / ggplot2 &
+                    \ref{fig_atenuacion} \\
+                    \hline
+                    1--5 & \textbf{Dashboard} de cuatro paneles
+                    \textbf{interactivo} & Plotly / ggplotly &
+                    \ref{fig_dashboard} \\
+                    \hline
+                \end{tabular}
+                \label{plan_figuras}
+            \end{center}
+        \end{table}
+
+        Las dos figuras interactivas se exportan como HTML autónomo, junto a sus 
+        equivalentes de R generados con \texttt{ggplotly}.
+        En ellas la interacción cumple una función analítica y no decorativa: aislar
+        un sector desde la leyenda equivale a ejecutar el análisis condicionado que
+        sostiene el argumento de este informe, y el \textit{hover} identifica
+        cliente y región sin volver a los datos.

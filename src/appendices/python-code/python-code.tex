@@ -3,7 +3,10 @@
     Se reproduce el bloque de \textit{hypothesis\_testing.py} que implementa las
     cinco pruebas con \textit{SciPy} y \textit{statsmodels}. Se omiten la generación
     del conjunto de datos y el código de las figuras 1 a 4 por razones de extensión;
-    el script completo está disponible en el repositorio del proyecto.
+    el script completo está disponible en el repositorio del proyecto. Los listados
+    de este anexo y del Anexo \ref{anexo_r} no se transcribieron a mano: un
+    utilitario los extrae del script real antes de cada compilación, de modo que
+    lo impreso aquí es código que efectivamente se ejecutó.
 
     \vspace{10pt}
 
@@ -11,10 +14,29 @@
 
     \vspace{10pt}
 
+    Los tamaños de efecto de la Tabla \ref{efectos} aplican directamente las
+    ecuaciones (\ref{cohend}) a (\ref{rdetectable}) sobre las salidas anteriores y
+    no requieren comentario adicional. No ocurre lo mismo con los contrastes
+    robustos de la Sección \ref{subsec_robustez_resultados}: ni el ANOVA de Welch ni
+    el post-hoc de Games-Howell están disponibles en \textit{SciPy} o
+    \textit{statsmodels}, por lo que se programaron a partir de sus formulaciones
+    originales. La verificación cruzada de la Tabla \ref{verificacion} adquiere aquí
+    especial valor, porque compara dos implementaciones escritas de forma
+    independiente y no dos bibliotecas que podrían compartir su procedencia.
+
+    \vspace{10pt}
+
+    \lstinputlisting[style=python]{utils/codes/effect_and_robust.py}
+
+    \vspace{10pt}
+
     La figura interactiva de la Figura \ref{fig_plotly} se construye con
     \textit{Plotly Express}, cuyo argumento \texttt{trendline} delega el ajuste de
     la recta por grupo en \textit{statsmodels}, de modo que las pendientes de la
     Tabla \ref{atenuacion} y las dibujadas en la figura proceden del mismo cálculo.
+    El tablero de la Figura \ref{fig_dashboard} se compone con
+    \texttt{plotly.subplots.make\_subplots} sobre los mismos objetos y se omite por
+    extensión.
 
     \vspace{10pt}
 

@@ -1,30 +1,7 @@
-library(ggplot2)
-
-# --- Rutas del proyecto (relativas a la raiz) -----
-dataset_path <- "data/dataset/consumo_energia.csv"
-processed_dir <- "data/processed"
-figures_dir <- "public/assets/images/figures/r/hypothesis"
-
-dir.create(figures_dir, recursive = TRUE, showWarnings = FALSE)
-
-# Nivel de significancia
-alpha <- 0.05
-
-# --------------------------------------------------
-# 1. LECTURA DEL DATASET (el mismo generado por Python, semilla 42)
-# --------------------------------------------------
-df <- read.csv(dataset_path, encoding = "UTF-8")
-df$sector <- as.factor(df$sector)
-cat("[OK] Dataset leido:", nrow(df), "filas\n")
-
-# --------------------------------------------------
-# 2. PRUEBAS DE HIPOTESIS (funciones base de R)
-# --------------------------------------------------
-
-# --- 2.1 Normalidad con shapiro.test por sector ---
+# --- 2.1 Normalidad con shapiro.test por sector ------------------------------
 # H0: los datos provienen de una distribucion normal
-normality_rows <- lapply(levels(df$sector), function(s) {
-  test <- shapiro.test(df$consumo_kwh[df$sector == s])
+normality_rows <- lapply(sector_order, function(s) {
+  test <- shapiro.test(consumo(s))
   data.frame(
     prueba = "Shapiro-Wilk (R)",
     grupo = s,
@@ -47,10 +24,10 @@ normality_r <- rbind(normality_r, data.frame(
 write.csv(normality_r, file.path(processed_dir, "normality_tests_r.csv"), row.names = FALSE)
 cat("[OK] Normalidad y Bartlett -> normality_tests_r.csv\n")
 
-# --- 2.2 Prueba t con t.test ----------------------
+# --- 2.2 Prueba t con t.test -------------------------------------------------
 # H0: consumo medio Residencial == consumo medio Comercial
-residential <- df$consumo_kwh[df$sector == "Residencial"]
-commercial <- df$consumo_kwh[df$sector == "Comercial"]
+residential <- consumo("Residencial")
+commercial <- consumo("Comercial")
 t_result <- t.test(residential, commercial, var.equal = FALSE)  # Welch
 
 ttest_r <- data.frame(
@@ -64,40 +41,54 @@ ttest_r <- data.frame(
 write.csv(ttest_r, file.path(processed_dir, "ttest_results_r.csv"), row.names = FALSE)
 cat("[OK] Prueba t -> ttest_results_r.csv\n")
 
-# --- 2.3 ANOVA con aov + TukeyHSD -----------------
+# --- 2.3 ANOVA con aov + TukeyHSD --------------------------------------------
 # H0: el consumo medio es igual en los 3 sectores
 anova_model <- aov(consumo_kwh ~ sector, data = df)
 anova_summary <- summary(anova_model)[[1]]
 write.csv(anova_summary, file.path(processed_dir, "anova_results_r.csv"))
 
 tukey <- TukeyHSD(anova_model)
-write.csv(as.data.frame(tukey$sector), file.path(processed_dir, "tukey_posthoc_r.csv"))
+tukey_df <- as.data.frame(tukey$sector)
+tukey_df$comparacion <- rownames(tukey_df)
+write.csv(tukey_df, file.path(processed_dir, "tukey_posthoc_r.csv"), row.names = FALSE)
 cat("[OK] ANOVA (aov) -> anova_results_r.csv | TukeyHSD -> tukey_posthoc_r.csv\n")
 
-# --- 2.4 Correlacion (cor.test) y regresion lineal (lm) ---
+f_anova <- anova_summary[["F value"]][1]
+p_anova <- anova_summary[["Pr(>F)"]][1]
+
+# --- 2.4 Correlacion (cor.test) y regresion lineal (lm) ----------------------
 # H0: no hay relacion lineal entre temperatura y consumo (r = 0)
 pearson <- cor.test(df$temperatura_c, df$consumo_kwh)
 linear_model <- lm(consumo_kwh ~ temperatura_c, data = df)
 
 regression_r <- data.frame(
+  ambito = "Global",
   prueba = "Pearson (cor.test) + lm (R)",
-  r_pearson = round(pearson$estimate, 4),
-  p_valor = format(pearson$p.value, digits = 4),
-  intercepto_b0 = round(coef(linear_model)[1], 2),
-  pendiente_b1 = round(coef(linear_model)[2], 2),
+  n = nrow(df),
+  r_pearson = round(unname(pearson$estimate), 4),
+  p_valor = round(pearson$p.value, 6),
+  intercepto_b0 = round(unname(coef(linear_model)[1]), 2),
+  pendiente_b1 = round(unname(coef(linear_model)[2]), 2),
+  desv_consumo = round(sd(df$consumo_kwh), 2),
   r_cuadrado = round(summary(linear_model)$r.squared, 4),
   decision = ifelse(pearson$p.value < alpha, "Relacion significativa", "Sin relacion significativa")
 )
 # Insight clave: la correlacion global se diluye porque los sectores tienen
 # niveles de consumo muy distintos; por sector la relacion si aparece.
-sector_rows <- lapply(levels(df$sector), function(s) {
+sector_rows <- lapply(sector_order, function(s) {
   sub_df <- df[df$sector == s, ]
   test <- cor.test(sub_df$temperatura_c, sub_df$consumo_kwh)
+  model_s <- lm(consumo_kwh ~ temperatura_c, data = sub_df)
   data.frame(
+    ambito = s,
     prueba = paste0("Pearson (", s, ")"),
-    r_pearson = round(test$estimate, 4),
-    p_valor = format(test$p.value, digits = 4),
-    intercepto_b0 = NA, pendiente_b1 = NA, r_cuadrado = NA,
+    n = nrow(sub_df),
+    r_pearson = round(unname(test$estimate), 4),
+    p_valor = round(test$p.value, 6),
+    intercepto_b0 = round(unname(coef(model_s)[1]), 2),
+    pendiente_b1 = round(unname(coef(model_s)[2]), 2),
+    desv_consumo = round(sd(sub_df$consumo_kwh), 2),
+    r_cuadrado = round(summary(model_s)$r.squared, 4),
     decision = ifelse(test$p.value < alpha, "Relacion significativa", "Sin relacion significativa")
   )
 })
@@ -105,3 +96,107 @@ regression_r <- rbind(regression_r, do.call(rbind, sector_rows))
 
 write.csv(regression_r, file.path(processed_dir, "regression_results_r.csv"), row.names = FALSE)
 cat("[OK] Correlacion y regresion -> regression_results_r.csv\n")
+
+
+n1 <- length(residential); n2 <- length(commercial)
+s1 <- sd(residential); s2 <- sd(commercial)
+
+# d de Cohen con desviacion combinada (pooled)
+pooled_sd <- sqrt(((n1 - 1) * s1^2 + (n2 - 1) * s2^2) / (n1 + n2 - 2))
+cohen_d <- (mean(commercial) - mean(residential)) / pooled_sd
+# g de Hedges: d corregida por el sesgo al alza en muestras pequenas
+hedges_g <- cohen_d * (1 - 3 / (4 * (n1 + n2) - 9))
+# IC del 95 % de d por la aproximacion normal del error estandar
+se_d <- sqrt((n1 + n2) / (n1 * n2) + cohen_d^2 / (2 * (n1 + n2)))
+d_ci <- cohen_d + c(-1, 1) * qnorm(1 - alpha / 2) * se_d
+
+ss_between <- anova_summary[["Sum Sq"]][1]
+ss_within <- anova_summary[["Sum Sq"]][2]
+df_between <- anova_summary[["Df"]][1]
+df_within <- anova_summary[["Df"]][2]
+ss_total <- ss_between + ss_within
+ms_within <- ss_within / df_within
+
+eta_sq <- ss_between / ss_total
+# omega cuadrado penaliza el sesgo optimista de eta cuadrado
+omega_sq <- (ss_between - df_between * ms_within) / (ss_total + ms_within)
+cohen_f <- sqrt(eta_sq / (1 - eta_sq))
+
+# Potencia observada por la distribucion no central, la misma definicion que
+# usa statsmodels: asi la comparacion Python-R es exacta y no aproximada.
+ncp_t <- abs(cohen_d) * sqrt(n1 * n2 / (n1 + n2))
+df_t <- n1 + n2 - 2
+crit_t <- qt(1 - alpha / 2, df_t)
+power_t <- pt(crit_t, df_t, ncp = ncp_t, lower.tail = FALSE) +
+  pt(-crit_t, df_t, ncp = ncp_t, lower.tail = TRUE)
+
+ncp_f <- nrow(df) * cohen_f^2
+power_anova <- pf(qf(1 - alpha, df_between, df_within), df_between, df_within,
+                  ncp = ncp_f, lower.tail = FALSE)
+
+# Sensibilidad sobre la correlacion global: con n = 300, cual es la correlacion
+# mas pequena detectable con potencia del 80 %? Si el r observado queda por
+# debajo, la no significancia es cuestion de magnitud, no de tamano muestral.
+r_detectable <- tanh((qnorm(1 - alpha / 2) + qnorm(0.80)) / sqrt(nrow(df) - 3))
+
+effects_r <- data.frame(
+  medida = c("d de Cohen (Res. vs Com.)", "g de Hedges (Res. vs Com.)",
+             "eta cuadrado (ANOVA sector)", "omega cuadrado (ANOVA sector)",
+             "f de Cohen (ANOVA sector)", "Potencia observada (t de Welch)",
+             "Potencia observada (ANOVA)",
+             "r minimo detectable (n = 300, potencia 0,80)"),
+  valor = round(c(cohen_d, hedges_g, eta_sq, omega_sq, cohen_f,
+                  power_t, power_anova, r_detectable), 4),
+  ic_inferior = c(round(d_ci[1], 4), rep(NA, 7)),
+  ic_superior = c(round(d_ci[2], 4), rep(NA, 7))
+)
+write.csv(effects_r, file.path(processed_dir, "effect_sizes_r.csv"), row.names = FALSE)
+cat("[OK] Tamanos de efecto y potencia -> effect_sizes_r.csv\n")
+
+
+welch <- oneway.test(consumo_kwh ~ sector, data = df, var.equal = FALSE)
+welch_r <- data.frame(
+  prueba = "ANOVA de Welch (oneway.test)",
+  estadistico_f = round(unname(welch$statistic), 4),
+  gl_numerador = round(unname(welch$parameter[1]), 2),
+  gl_denominador = round(unname(welch$parameter[2]), 2),
+  p_valor = format(welch$p.value, digits = 4),
+  decision = ifelse(welch$p.value < alpha, "Se rechaza H0", "No se rechaza H0")
+)
+write.csv(welch_r, file.path(processed_dir, "welch_anova_r.csv"), row.names = FALSE)
+
+# Games-Howell: error estandar de Welch por par y grados de libertad de
+# Welch-Satterthwaite, contrastados contra el rango estudentizado (ptukey).
+games_howell <- function(data) {
+  k <- length(sector_order)
+  pairs <- combn(sector_order, 2, simplify = FALSE)
+  rows <- lapply(pairs, function(pair) {
+    ga <- data$consumo_kwh[data$sector == pair[1]]
+    gb <- data$consumo_kwh[data$sector == pair[2]]
+    na <- length(ga); nb <- length(gb)
+    va <- var(ga); vb <- var(gb)
+    diff <- mean(gb) - mean(ga)
+
+    se <- sqrt(va / na + vb / nb)
+    df_wl <- (va / na + vb / nb)^2 /
+      ((va / na)^2 / (na - 1) + (vb / nb)^2 / (nb - 1))
+    q_stat <- abs(diff) / se * sqrt(2)
+    p_adj <- ptukey(q_stat, nmeans = k, df = df_wl, lower.tail = FALSE)
+    margin <- qtukey(1 - alpha, nmeans = k, df = df_wl) / sqrt(2) * se
+
+    data.frame(
+      comparacion = paste(pair[2], "-", pair[1]),
+      diferencia = round(diff, 3),
+      ic_inferior = round(diff - margin, 3),
+      ic_superior = round(diff + margin, 3),
+      q = round(q_stat, 3),
+      gl_welch = round(df_wl, 2),
+      p_ajustado = signif(p_adj, 4),
+      decision = ifelse(p_adj < alpha, "Se rechaza H0", "No se rechaza H0")
+    )
+  })
+  do.call(rbind, rows)
+}
+gh_r <- games_howell(df)
+write.csv(gh_r, file.path(processed_dir, "games_howell_r.csv"), row.names = FALSE)
+cat("[OK] ANOVA de Welch -> welch_anova_r.csv | Games-Howell -> games_howell_r.csv\n")

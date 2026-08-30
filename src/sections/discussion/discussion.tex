@@ -76,6 +76,29 @@
         dilución: la varianza entre sectores actúa como ruido frente a una señal que
         permanece intacta \cite{kievit2013simpson}.
 
+        \begin{figure*}[!t]
+            \centering
+            \includegraphics[width=0.95\linewidth]{assets/images/figures/python/fig8_atenuacion.png}
+            \caption{Descomposición gráfica de la identidad $r = b_1 s_T / s_Y$
+            sobre los cuatro ámbitos de análisis (seaborn). El panel izquierdo
+            muestra que la pendiente global se mantiene cerca del valor de diseño;
+            el central, que la desviación del consumo se multiplica por casi ocho
+            al mezclar los sectores; el derecho, la consecuencia sobre la
+            correlación}
+            \label{fig_atenuacion}
+        \end{figure*}
+
+        La Figura \ref{fig_atenuacion} traduce esa aritmética en tres paneles que
+        pueden leerse de izquierda a derecha como una cadena causal. La pendiente
+        global, 3,42, se sitúa dentro del rango que definen las tres pendientes
+        sectoriales y próxima al valor de diseño; la desviación del consumo salta
+        de 40,6 kWh en Residencial a 317,5 en el agregado, un factor cercano a
+        ocho; y la correlación se desploma en la misma proporción en que crece ese
+        denominador. Presentar los tres términos por separado evita el error de
+        interpretación más frecuente ante un $r$ pequeño, que es atribuirlo a la
+        ausencia de efecto en lugar de a un cambio de escala en la variable
+        dependiente.
+
         \vspace{10pt}
 
         Conviene subrayar la asimetría práctica de este resultado. Si el objetivo
@@ -85,12 +108,40 @@
         conduciría a descartarla. La prueba de hipótesis responde a la segunda
         pregunta y, sin la figura, lo haría de forma equivocada.
 
+    \subsection{Síntesis en un tablero interactivo}
+        \label{subsec_dashboard}
+        Las figuras anteriores atienden cada una a una hipótesis. El paso final es
+        reunirlas en una sola vista que permita confrontarlas entre sí, porque la
+        contradicción que articula este informe solo aparece al poner un resultado
+        junto a otro. La Figura \ref{fig_dashboard} presenta ese tablero.
+
+        \begin{figure*}[!t]
+            \centering
+            \includegraphics[width=0.93\linewidth]{assets/images/figures/python/fig9_dashboard_plotly.png}
+            \caption{Tablero interactivo que reúne las cuatro decisiones del
+            protocolo (Plotly). El código de color del panel B distingue las
+            hipótesis rechazadas de las que no lo son. Versión estática de la
+            figura interactiva, que en el navegador permite hacer zoom, aislar
+            series y consultar el identificador y la región de cada cliente}
+            \label{fig_dashboard}
+        \end{figure*}
+
+        La lectura conjunta es lo que aporta el formato. El panel A establece que
+        el sector separa las distribuciones sin traslape; el panel B muestra que
+        ese mismo conjunto de datos declara no significativa la correlación global
+        mientras la del sector Residencial es la mayor de las cuatro; el panel C
+        exhibe la recta agregada atravesando tres franjas que no describe; y el
+        panel D identifica el término responsable, la desviación del consumo, que
+        en el ámbito global supera incluso a la del sector más disperso. Los cuatro
+        paneles proceden de los mismos 300 registros, y es su yuxtaposición la que
+        convierte un conjunto de valores $p$ en un diagnóstico.
+
     \subsection{Verificación cruzada y reproducibilidad}
         La Tabla \ref{verificacion} compara las cifras obtenidas en ambos entornos.
         La coincidencia dígito a dígito confirma que los resultados son propiedad de
         los datos y no del software empleado.
 
-        \begin{table}[H]
+        \begin{table}[!htbp]
             \centering
             \caption{Verificación cruzada entre Python y R}
             \begin{center}
@@ -108,6 +159,14 @@
                     \hline
                     Pearson global & $r = 0{,}063$ & $r = 0{,}063$ \\
                     \hline
+                    $d$ de Cohen & 3,3288 & 3,3288 \\
+                    \hline
+                    $\eta^2$ / $\omega^2$ & 0,8394 / 0,8378 & 0,8394 / 0,8378 \\
+                    \hline
+                    ANOVA de Welch & $F = 830{,}2239$ & $F = 830{,}2239$ \\
+                    \hline
+                    Games-Howell (Ind.$-$Res.) & $+700{,}698$ & $+700{,}698$ \\
+                    \hline
                     Varianzas & Levene $= 60{,}43$ & Bartlett $= 199{,}39$ \\
                     \hline
                 \end{tabular}
@@ -115,39 +174,87 @@
             \end{center}
         \end{table}
 
+        La coincidencia abarca también las medidas que no proceden de una función
+        de biblioteca. Los tamaños de efecto, la potencia y el post-hoc de
+        Games-Howell se programaron de cero en ambos entornos a partir de sus
+        fórmulas cerradas, sin recurrir a paquetes especializados, y aun así los
+        cuatro primeros decimales coinciden; es una verificación más exigente que
+        la de las pruebas estándar, donde dos implementaciones maduras del mismo
+        algoritmo podrían coincidir por compartir su origen.
+
+        \vspace{10pt}
+
         La única discrepancia corresponde a la homogeneidad de varianzas y es
-        esperada, puesto que Levene se apoya en las desviaciones absolutas respecto
-        de la media y Bartlett en el cociente de verosimilitudes bajo el supuesto de
-        normalidad; son estadísticos distintos que en este caso conducen a la misma
-        decisión. Las cinco figuras se replicaron además con ggplot2 sobre los
-        estadísticos recalculados en R; la Figura \ref{fig_ggplot} presenta dos de
-        ellas, que reproducen la separación entre sectores y el conjunto de
-        pendientes paralelas obtenidos en Python.
+        esperada, puesto que Levene \cite{levene1960robust} se apoya en las
+        desviaciones absolutas respecto de la media y Bartlett en el cociente de
+        verosimilitudes bajo el supuesto de normalidad; son estadísticos distintos
+        que en este caso conducen a la misma decisión.
+
+        \begin{figure*}[!t]
+            \centering
+            \includegraphics[width=0.485\linewidth]{assets/images/figures/r/fig1_histograma_normalidad.png}
+            \hfill
+            \includegraphics[width=0.485\linewidth]{assets/images/figures/r/fig3_medias_ic95.png}
+
+            \vspace{6pt}
+
+            \includegraphics[width=0.485\linewidth]{assets/images/figures/r/fig7_tukey_forest.png}
+            \hfill
+            \includegraphics[width=0.485\linewidth]{assets/images/figures/r/fig5_dispersion_sectores.png}
+            \caption{Cuatro de las nueve réplicas construidas con ggplot2 sobre los
+            estadísticos recalculados en R: verificación de normalidad (arriba
+            izquierda), medias con los intervalos y las letras de Tukey (arriba
+            derecha), comparaciones múltiples con ambos post-hoc (abajo izquierda)
+            y relación temperatura-consumo desagregada por sector (abajo derecha)}
+            \label{fig_ggplot}
+        \end{figure*}
+
+        Las nueve figuras se replicaron íntegramente con ggplot2
+        \cite{wickham2016ggplot2} sobre los estadísticos recalculados en R, de modo
+        que ni las cifras ni los gráficos del informe dependen de un único entorno.
+        La Figura \ref{fig_ggplot} recoge cuatro de ellas y la Figura
+        \ref{fig_ggplot_extra} el tablero completo, construido con la misma
+        gramática de gráficos y convertido en interactivo mediante
+        \texttt{ggplotly}. La comparación con las Figuras \ref{fig_forest},
+        \ref{fig_medias} y \ref{fig_dashboard} muestra que ambas cadenas de
+        herramientas producen la misma lectura: los mismos intervalos que no
+        cruzan el cero, las mismas letras de Tukey y la misma discrepancia entre
+        la correlación global y la del sector Residencial.
 
         \begin{figure}[!htbp]
             \centering
-            \includegraphics[width=1\linewidth]{assets/images/figures/r/fig2_boxplot_sectores.png}
-
-            \vspace{4pt}
-
-            \includegraphics[width=1\linewidth]{assets/images/figures/r/fig5_dispersion_sectores.png}
-            \caption{Réplicas en ggplot2 sobre los estadísticos recalculados en R:
-            distribución del consumo por sector (arriba) y relación
-            temperatura-consumo desagregada (abajo)}
-            \label{fig_ggplot}
+            \includegraphics[width=1\linewidth]{assets/images/figures/r/fig9_dashboard.png}
+            \caption{Réplica en ggplot2 del tablero de la Figura
+            \ref{fig_dashboard}, compuesta en una retícula de cuatro paneles y
+            exportada también como versión interactiva mediante \texttt{ggplotly}}
+            \label{fig_ggplot_extra}
         \end{figure}
 
     \subsection{Limitaciones}
         Tres advertencias delimitan el alcance de los resultados. La primera es que
-        el ANOVA clásico asume homocedasticidad, supuesto que la Tabla
-        \ref{supuestos} rechaza; el diseño balanceado con $n = 100$ por grupo y la
-        magnitud del estadístico ($F = 775{,}99$) hacen que la conclusión sea
-        robusta, pero un contraste estricto debería recurrir al ANOVA de Welch o
-        sustituir Tukey por Games-Howell \cite{montgomery2020design}. La segunda es
-        que la significancia de las tres comparaciones de Tukey se ve favorecida por
-        el tamaño muestral, de modo que la magnitud de las diferencias, y no su
-        valor $p$, es lo que sustenta las recomendaciones. La tercera es que los
-        datos son simulados y su estructura sectorial se conoce de antemano; en un
-        conjunto real la variable que induce la agregación podría no estar registrada,
-        lo que refuerza el argumento central de este informe, ya que la figura sería
-        entonces el único indicio disponible de que el modelo agregado es inadecuado.
+        los datos son simulados y su estructura sectorial se conoce de antemano; en
+        un conjunto real la variable que induce la agregación podría no estar
+        registrada, lo que refuerza el argumento central de este informe, ya que la
+        figura sería entonces el único indicio disponible de que el modelo agregado
+        es inadecuado. La segunda es que el análisis se limita a la relación lineal
+        entre dos variables: la correlación de Pearson y el modelo de la ecuación
+        (\ref{ols}) no capturarían una dependencia en forma de U, que un modelo
+        multivariante con el sector como covariable o un ajuste no paramétrico sí
+        detectarían. La tercera es que el efecto de la temperatura se introdujo
+        idéntico en los tres sectores, de modo que el escenario examinado es el de
+        rectas paralelas; si las pendientes difirieran entre grupos habría que
+        contrastar además el término de interacción, y la conclusión sobre qué
+        segmento incorporar a la planeación podría cambiar.
+
+        \vspace{10pt}
+
+        Dos reservas que habrían figurado aquí quedan resueltas en el cuerpo del
+        informe. El incumplimiento de la homocedasticidad no se deja como
+        advertencia sino que se contrasta en la Sección
+        \ref{subsec_robustez_resultados}, donde el ANOVA de Welch y el post-hoc de
+        Games-Howell reproducen la decisión del procedimiento clásico
+        \cite{montgomery2020design}. Y la sospecha de que la significancia de las
+        comparaciones múltiples se deba al tamaño muestral se descarta en la
+        Sección \ref{subsec_efecto_resultados}: con $d = 3{,}33$ y
+        $\omega^2 = 0{,}838$, las diferencias serían significativas con una
+        fracción de las observaciones disponibles.

@@ -57,6 +57,8 @@
         {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
         {ñ}{{\~n}}1 {Ñ}{{\~N}}1
         {°}{{\textdegree}}1
+        {·}{{\textperiodcentered}}1
+        {—}{{---}}1
         {σ}{{$\sigma$}}1
         {≈}{{$\approx$}}1
         {¨}{}1
@@ -116,26 +118,33 @@
         indispensable de su interpretación. Se verifican primero los supuestos con
         Shapiro-Wilk y Levene, y al rechazarse la homogeneidad de varianzas se adopta
         la corrección de Welch; la prueba t confirma que el consumo comercial
-        (431,30 kWh) más que duplica al residencial (186,98 kWh) y el ANOVA de un
-        factor ($F = 775{,}99$; $p < 0{,}001$) atribuye el 83,9\,\% de la variabilidad
-        al sector, con las tres comparaciones de Tukey significativas. El resultado
-        central aparece en la regresión: la correlación entre temperatura y consumo
-        es no significativa a nivel agregado ($r = 0{,}063$; $p = 0{,}277$) pero sí lo
-        es dentro del sector Residencial ($r = 0{,}595$; $p < 0{,}001$). El análisis
-        muestra que la pendiente sobrevive a la agregación ($b_1 = 3{,}42$ frente al
-        valor de diseño de 4) mientras la correlación se desploma, porque la
-        desviación estándar del consumo se triplica al mezclar los sectores, de 40,6
-        a 317,5 kWh; la figura interactiva construida con Plotly revela tres rectas
-        paralelas que ningún estadístico agregado permite anticipar. Todos los
-        resultados se replican de forma independiente en R con coincidencia dígito a
+        (431,30 kWh) más que duplica al residencial (186,98 kWh) con una $d$ de Cohen
+        de 3,33, y el ANOVA de un factor ($F = 775{,}99$; $p < 0{,}001$;
+        $\omega^2 = 0{,}838$) atribuye el 83,9\,\% de la variabilidad al sector, con
+        las tres comparaciones de Tukey significativas. El incumplimiento de la
+        homocedasticidad se somete a prueba en lugar de anotarse como limitación: el
+        ANOVA de Welch y el post-hoc de Games-Howell reproducen la misma decisión. El
+        resultado central aparece en la regresión: la correlación entre temperatura y
+        consumo es no significativa a nivel agregado ($r = 0{,}063$; $p = 0{,}277$)
+        pero sí lo es dentro del sector Residencial ($r = 0{,}595$; $p < 0{,}001$). El
+        análisis muestra que la pendiente sobrevive a la agregación ($b_1 = 3{,}42$
+        frente al valor de diseño de 4) mientras la correlación se desploma, porque la
+        desviación estándar del consumo se multiplica por casi ocho al mezclar los
+        sectores, de 40,6 a 317,5 kWh; con potencia máxima en ambos contrastes y un
+        umbral de detección de $r_{\min} = 0{,}161$, la no significancia global no es
+        atribuible al tamaño muestral. La figura interactiva y el tablero construidos
+        con Plotly revelan tres rectas paralelas que ningún estadístico agregado
+        permite anticipar. Las nueve figuras se replican con ggplot2 y todos los
+        resultados se recalculan de forma independiente en R con coincidencia dígito a
         dígito.
     \end{abstract}
 
     \vspace{10pt}
 
     \begin{IEEEkeywords}
-        Pruebas de hipótesis, ANOVA, Tukey HSD, prueba t de Welch, correlación de
-        Pearson, visualización interactiva, agregación de subpoblaciones, SciPy,
+        Pruebas de hipótesis, ANOVA, Tukey HSD, Games-Howell, prueba t de Welch,
+        tamaño del efecto, potencia estadística, correlación de Pearson,
+        visualización interactiva, dashboard, agregación de subpoblaciones, SciPy,
         statsmodels, Plotly, ggplot2.
     \end{IEEEkeywords}
 

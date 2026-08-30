@@ -20,7 +20,7 @@
 | **Programa** | Maestría en Inteligencia Artificial |
 | **Universidad** | Universidad de La Salle |
 | **Formato** | Artículo IEEE conference (`IEEEtran`, dos columnas) |
-| **Extensión** | 9 páginas, incluidos anexos y referencias |
+| **Extensión** | 15 páginas: 10 de cuerpo y 5 de anexos de código y referencias |
 | **Año** | 2026 |
 | **Estado** | Completado |
 
@@ -42,7 +42,8 @@ Es decir, **el estimador del efecto sobrevive a la agregación; la medida de aso
 
 - Formular cinco hipótesis sobre el consumo y contrastarlas con la prueba adecuada a cada caso.
 - Verificar los supuestos de normalidad y homocedasticidad antes de aplicar pruebas paramétricas, y corregir el procedimiento cuando no se cumplen.
-- Representar cada resultado con su visualización, incluyendo una figura interactiva construida con Plotly.
+- Reportar el **tamaño del efecto** y la **potencia** junto a cada valor *p*, y contrastar la robustez de las conclusiones cuando un supuesto no se cumple.
+- Representar cada resultado con su visualización, incluyendo dos figuras interactivas y un *dashboard* construidos con Plotly, replicados con ggplot2.
 - Interpretar los hallazgos en términos de decisión y no solo de significancia estadística.
 - Entregar el informe escrito aplicando la normativa IEEE.
 
@@ -60,8 +61,8 @@ Es decir, **el estimador del efecto sobrevive a la agregación; la medida de aso
 │       ├── Logo.png                  # Logo institucional (marca de agua)
 │       ├── author/                   # Fotografía del autor
 │       └── figures/
-│           ├── python/               # 5 figuras (Matplotlib, seaborn y Plotly)
-│           └── r/                    # 2 réplicas en ggplot2 citadas desde el informe
+│           ├── python/               # 9 figuras (Matplotlib, seaborn y Plotly)
+│           └── r/                    # 9 réplicas en ggplot2, 5 citadas desde el informe
 ├── src/
 │   ├── sections/                     # Secciones del informe (en orden de compilación)
 │   │   ├── introduction/             # I. Introducción
@@ -74,15 +75,23 @@ Es decir, **el estimador del efecto sobrevive a la agregación; la medida de aso
 │       └── r-code/                   # Anexo B: núcleo estadístico en R
 ├── utils/
 │   ├── codes/                        # Extractos citados vía \lstinputlisting
+│   │   ├── sync_appendix.py                   # Extrae los extractos del script real (ver nota)
 │   │   ├── hypothesis_testing_core.py         # Las cinco pruebas con SciPy y statsmodels
+│   │   ├── effect_and_robust.py               # ANOVA de Welch y Games-Howell desde sus fórmulas
 │   │   ├── plotly_figure.py                   # Construcción de la figura interactiva
 │   │   └── hypothesis_testing_core.R          # Recálculo independiente en R base
 │   └── references/
-│       └── references.bib            # Bibliografía IEEE (18 referencias)
+│       └── references.bib            # Bibliografía IEEE (24 referencias)
 └── build/                            # Artefactos de compilación LaTeX (generado)
 ```
 
-> ℹ️ Los anexos reproducen el **núcleo estadístico** de cada script, no su totalidad: la actividad limita el informe a 10 páginas incluyendo anexos, y el código de generación del dataset y de las figuras 1 a 4 excede ese margen. Los scripts completos están en [`hypothesis_visualizations`](../hypothesis_visualizations).
+> ℹ️ Los anexos reproducen el **núcleo estadístico** de cada script, no su totalidad: el código de generación del dataset y de las nueve figuras excede el margen razonable de un anexo. Los scripts completos están en [`hypothesis_visualizations`](../hypothesis_visualizations).
+
+> 🔄 **Los extractos no se transcriben a mano.** [`utils/codes/sync_appendix.py`](utils/codes/sync_appendix.py) los extrae del script real —parseando el AST en Python y por marcadores de bloque en R— de modo que lo impreso en el PDF es código que efectivamente se ejecutó. Ejecútalo antes de compilar si tocaste los scripts:
+>
+> ```bash
+> python utils/codes/sync_appendix.py
+> ```
 
 ---
 
@@ -92,13 +101,13 @@ Es decir, **el estimador del efecto sobrevive a la agregación; la medida de aso
 |---|---|---|
 | — | Resumen | Las cifras principales y el hallazgo central |
 | I | Introducción | Qué mide y qué no mide un valor *p*; el cuarteto de Anscombe y la agregación de subpoblaciones como marco |
-| II | Metodología | Conjunto de datos (**Tabla I**), diseño del contraste (**Tabla II**) y las **6 ecuaciones** de las pruebas |
-| III | Resultados | Supuestos, prueba t, ANOVA + Tukey y regresión — **Tablas III–VII** y **Figuras 1–4** |
-| IV | El papel de la visualización | La figura interactiva (**Figura 5**), la identidad *r = b₁·s_T/s_Y*, la verificación cruzada con sus réplicas en ggplot2 (**Figura 6**) y las limitaciones |
-| V | Conclusiones | Seis conclusiones y tres recomendaciones para la toma de decisiones |
-| A | Anexo · Python | Las cinco pruebas con SciPy y statsmodels + la figura de Plotly |
-| B | Anexo · R | El recálculo independiente con `shapiro.test`, `t.test`, `aov`, `TukeyHSD`, `cor.test` y `lm` |
-| — | Referencias | 18 entradas en formato IEEE |
+| II | Metodología | Conjunto de datos (**Tabla I**), diseño del contraste (**Tabla II**), tamaño del efecto y potencia, contrastes robustos, y el **plan de visualización** que mapea cada hipótesis a su figura y biblioteca (**Tabla III**) — **11 ecuaciones** |
+| III | Resultados | Supuestos con Q-Q, prueba t, ANOVA + Tukey, **tamaños de efecto y potencia**, **robustez con Welch y Games-Howell**, y regresión — **Tablas IV–X** y **Figuras 1–6** |
+| IV | El papel de la visualización | La figura interactiva (**Figura 7**), la identidad *r = b₁·s_T/s_Y* descompuesta (**Figura 8**), el *dashboard* (**Figura 9**), la verificación cruzada con las réplicas en ggplot2 (**Figuras 10–11**) y las limitaciones |
+| V | Conclusiones | Ocho conclusiones y tres recomendaciones para la toma de decisiones |
+| A | Anexo · Python | Las cinco pruebas con SciPy y statsmodels, el ANOVA de Welch y Games-Howell implementados desde sus fórmulas, y la figura de Plotly |
+| B | Anexo · R | El recálculo independiente con `shapiro.test`, `t.test`, `aov`, `TukeyHSD`, `cor.test`, `lm` y `oneway.test`, más los efectos y Games-Howell sobre `ptukey` |
+| — | Referencias | 24 entradas en formato IEEE |
 
 ### Las cinco hipótesis contrastadas
 
@@ -119,10 +128,15 @@ Es decir, **el estimador del efecto sobrevive a la agregación; la medida de aso
 | t de Welch (Res. vs Com.) | −23,54 | 2,3 × 10⁻⁴⁹ | 186,98 vs 431,30 kWh |
 | ANOVA de un factor | F = 775,99 | 1,2 × 10⁻¹¹⁸ | El sector explica el **83,9 %** |
 | Tukey (3 comparaciones) | — | < 0,001 | Ningún par es equivalente |
+| **ANOVA de Welch** | F = 830,22 | < 0,001 | Misma decisión **sin** homocedasticidad |
+| **Games-Howell** (3 comparaciones) | — | < 0,001 | Misma decisión; cambia la precisión |
+| **Tamaño del efecto** | *d* = 3,33 · ω² = 0,838 | — | Efecto **muy grande**, no solo significativo |
+| **Potencia** (*t* y ANOVA) | > 0,999 | — | La significancia no viene del tamaño muestral |
 | Pearson global | r = 0,063 | 0,277 | **No significativa** |
 | Pearson Residencial | r = 0,595 | < 0,001 | **Significativa** |
+| **$r_{mín}$ detectable** (n = 300) | 0,161 | — | El *r* global queda **por debajo** del umbral |
 
-Todos los estadísticos coinciden **dígito a dígito** entre Python y R. La única discrepancia esperada es Levene vs. Bartlett, por tratarse de pruebas distintas que aquí conducen a la misma decisión.
+Todos los estadísticos coinciden **dígito a dígito** entre Python y R, incluidos los tamaños de efecto, la potencia y Games-Howell —que no existen en `scipy`/`statsmodels` ni en R base y se implementaron de cero en cada entorno, lo que hace la verificación más exigente que comparar dos bibliotecas del mismo algoritmo. La única discrepancia esperada es Levene vs. Bartlett, por tratarse de pruebas distintas que aquí conducen a la misma decisión.
 
 ---
 
@@ -131,14 +145,14 @@ Todos los estadísticos coinciden **dígito a dígito** entre Python y R. La ún
 ### Opción 1: `latexmk` (recomendado)
 
 ```bash
-latexmk -pdf -outdir=build main.tex
+latexmk main.tex
 ```
 
-> ⚠️ BibTeX se ejecuta con el directorio de trabajo en `build/`, así que la ruta relativa `utils/references/references.bib` no se resuelve sola. Si aparece `I couldn't open database file`, exporta `BIBINPUTS` apuntando a la raíz del proyecto:
->
-> ```bash
-> BIBINPUTS=".:..:$PWD:" latexmk -pdf -outdir=build main.tex
-> ```
+No hacen falta banderas: [`.latexmkrc`](.latexmkrc) fija `$pdf_mode`, `$out_dir = 'build'` y `$bibtex_fudge = 0`.
+
+> ℹ️ Ese último ajuste resuelve un fallo real. Por defecto latexmk invoca bibtex situándose **dentro** de `build/`, y entonces la ruta relativa que el `.aux` declara en `\bibdata{utils/references/references}` deja de resolver: aparece `I couldn't open database file` y la bibliografía sale vacía. Con `$bibtex_fudge = 0` bibtex corre desde la raíz del proyecto y encuentra el `.bib` sin tocar `BIBINPUTS`.
+
+> ⚠️ No mezcles `pdflatex` suelto con `latexmk`: una invocación manual deja el `.fdb_latexmk` marcado con error y latexmk se niega a continuar (`gave an error in previous invocation`). Si ocurre, borra `build/` y vuelve a empezar.
 
 ### Opción 2: `pdflatex` manual
 
@@ -189,14 +203,14 @@ La Figura 5 usa `figure*[!t]`, el flotante de doble columna de IEEE, porque es l
 
 ## 📋 Estado del Documento
 
-El informe está **terminado**: compila en **9 páginas** —dentro del límite de 5 a 10 que fija la actividad— sin desbordes de caja y sin referencias ni citas sin resolver.
+El informe está **terminado**: compila en **15 páginas** —10 de cuerpo y 5 de anexos de código y referencias— sin desbordes de caja y sin referencias ni citas sin resolver.
 
-- ✅ **6 figuras** referenciadas desde el texto (Matplotlib, seaborn, Plotly y ggplot2)
-- ✅ **9 tablas** con las cifras reales de la ejecución
-- ✅ **7 ecuaciones** numeradas y referenciadas
-- ✅ **2 anexos** con el núcleo estadístico de ambos scripts
-- ✅ Bibliografía IEEE con **18 referencias**
-- ✅ Compilación sin `Overfull` ni `Underfull \hbox`/`\vbox`
+- ✅ **11 figuras** referenciadas desde el texto (Matplotlib, seaborn, Plotly y ggplot2), cada una con su estadístico impreso
+- ✅ **12 tablas** con las cifras reales de la ejecución
+- ✅ **12 ecuaciones** numeradas y referenciadas
+- ✅ **2 anexos** con el núcleo estadístico de ambos scripts, extraídos automáticamente del código real
+- ✅ Bibliografía IEEE con **24 referencias**
+- ✅ Compilación limpia: sin `Overfull`, sin `Underfull \hbox`/`\vbox` y sin referencias ni citas indefinidas
 
 ---
 

@@ -16,6 +16,26 @@
 
         \vspace{10pt}
 
+        \item El incumplimiento de la homocedasticidad se resolvió contrastándolo y
+        no advirtiéndolo, ya que repetir el análisis con el ANOVA de Welch
+        ($F = 830{,}22$) y el post-hoc de Games-Howell reprodujo íntegramente la
+        decisión del procedimiento clásico; la elección del método altera la
+        precisión de cada intervalo, estrechándolo entre los sectores de menor
+        varianza y ensanchándolo en los que involucran al Industrial, pero no la
+        conclusión.
+
+        \vspace{10pt}
+
+        \item Reportar la magnitud junto al valor $p$ resultó indispensable para
+        interpretar dos resultados que el estadístico presenta de forma engañosamente
+        similar, dado que la diferencia entre sectores corresponde a un efecto
+        enorme ($d = 3{,}33$; $\omega^2 = 0{,}838$) mientras que la correlación
+        global no alcanza siquiera el umbral de $r_{\min} = 0{,}161$ detectable con
+        potencia del 80\,\%, lo que descarta que su no significancia se deba a un
+        tamaño muestral insuficiente.
+
+        \vspace{10pt}
+
         \item El hallazgo central es que una prueba de hipótesis puede no rechazar
         $H_0$ aunque el efecto exista, ya que la correlación temperatura-consumo
         resulta no significativa a nivel agregado ($r = 0{,}063$; $p = 0{,}277$)
@@ -42,9 +62,19 @@
         \vspace{10pt}
 
         \item La equivalencia entre Python y R, con coincidencia dígito a dígito en
-        Shapiro-Wilk, la t de Welch, el ANOVA, Tukey y la regresión, confirma que
-        los resultados dependen de los datos y no de la herramienta, y valida la
-        implementación de ambos scripts de forma independiente.
+        Shapiro-Wilk, la t de Welch, el ANOVA, Tukey, la regresión, los tamaños de
+        efecto y ambos contrastes robustos, confirma que los resultados dependen de
+        los datos y no de la herramienta; el acuerdo es especialmente exigente en
+        Games-Howell y en la potencia, programados de cero en cada entorno a partir
+        de sus fórmulas y no heredados de una biblioteca común.
+
+        \vspace{10pt}
+
+        \item Las nueve figuras se construyeron dos veces, con Matplotlib, seaborn y
+        Plotly en Python y con ggplot2 en R, y cada una lleva impreso el estadístico
+        que representa; las dos versiones interactivas y el tablero de cuatro paneles
+        permiten además condicionar por sector sin recalcular nada, que es la
+        operación exacta que separa la conclusión correcta de la equivocada.
     \end{itemize}
 
     \vspace{10pt}

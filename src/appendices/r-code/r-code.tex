@@ -2,8 +2,13 @@
     \label{anexo_r}
     El script \textit{hypothesis\_testing.R} recalcula las cinco pruebas con las
     funciones nativas de R sin reutilizar ningún valor de Python, y produce las
-    cifras de la columna derecha de la Tabla \ref{verificacion}. Se omite el bloque
-    de las réplicas en ggplot2 por razones de extensión.
+    cifras de la columna derecha de la Tabla \ref{verificacion}. Al bloque de
+    contraste se añaden los tamaños de efecto, la potencia y las dos versiones
+    robustas, escritos también desde sus fórmulas: \texttt{oneway.test} cubre el
+    ANOVA de Welch, mientras que Games-Howell se implementa sobre
+    \texttt{ptukey} y \texttt{qtukey}, las funciones de distribución del rango
+    estudentizado que R expone en su paquete \textit{stats}. Se omite el bloque
+    de las nueve réplicas en ggplot2 por razones de extensión.
 
     \vspace{10pt}
 

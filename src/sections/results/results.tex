@@ -49,6 +49,24 @@
         y la campana teórica lo que confirma que la coincidencia es real y no el
         resultado de una prueba con poca potencia.
 
+        \begin{figure*}[!t]
+            \centering
+            \includegraphics[width=0.94\linewidth]{assets/images/figures/python/fig6_qqplots_normalidad.png}
+            \caption{Diagnóstico gráfico de normalidad en los tres sectores mediante
+            gráficos cuantil-cuantil (Matplotlib). Cada panel rotula el estadístico
+            $W$ de Shapiro-Wilk y su valor $p$}
+            \label{fig_qq}
+        \end{figure*}
+
+        El histograma resuelve bien el centro de la distribución pero pierde
+        resolución en las colas, que es justamente donde una desviación de la
+        normalidad comprometería la validez de las pruebas paramétricas. La Figura
+        \ref{fig_qq} audita ese tramo: en los tres sectores los puntos se alinean
+        sobre la diagonal teórica a lo largo de todo el recorrido, sin la curvatura
+        en forma de S propia de la asimetría ni el despegue característico de las
+        colas pesadas. La normalidad queda así respaldada por dos vías
+        independientes, una analítica \cite{shapiro1965analysis} y otra gráfica.
+
     \subsection{Comparación de medias}
         La Tabla \ref{ttest} presenta el contraste entre los sectores Residencial y
         Comercial. La diferencia es tan marcada que el estadístico deja el resultado
@@ -136,8 +154,9 @@
         \begin{figure}[!htbp]
             \centering
             \includegraphics[width=1\linewidth]{assets/images/figures/python/fig2_boxplot_sectores.png}
-            \caption{Distribución del consumo por sector con las observaciones
-            superpuestas (seaborn)}
+            \caption{Distribución del consumo por sector: violín, caja e
+            individuos superpuestos, con el resultado del ANOVA y su $\eta^2$
+            rotulados sobre la propia figura (seaborn)}
             \label{fig_boxplot}
         \end{figure}
 
@@ -145,9 +164,133 @@
             \centering
             \includegraphics[width=1\linewidth]{assets/images/figures/python/fig3_medias_ic95.png}
             \caption{Consumo medio por sector con intervalos de confianza del
-            95\,\%: la lectura gráfica del post-hoc de Tukey (Matplotlib)}
+            95\,\%. Las letras (a), (b) y (c) codifican el post-hoc de Tukey:
+            sectores con letras distintas difieren significativamente (Matplotlib)}
             \label{fig_medias}
         \end{figure}
+
+    \subsection{Magnitud del efecto y potencia}
+        \label{subsec_efecto_resultados}
+        Los valores $p$ de las Tablas \ref{ttest} y \ref{anova_tabla} son tan
+        extremos que dejan de ser informativos: con $n = 100$ por grupo indican
+        que la diferencia existe, pero no cuánto vale. La Tabla \ref{efectos}
+        cuantifica esa magnitud.
+
+        \begin{table}[H]
+            \centering
+            \caption{Tamaños de efecto y potencia observada}
+            \begin{center}
+                \begin{tabular}{|>{\raggedright\arraybackslash}p{2.35cm}|c|c|l|}
+                    \hline
+                    \textbf{Medida} & \textbf{Valor} & \textbf{IC 95\,\%} &
+                    \textbf{Lectura} \\
+                    \hline
+                    $d$ de Cohen (Res.--Com.) & 3,329 & [2,901 ; 3,757] &
+                    Muy grande \\
+                    \hline
+                    $g$ de Hedges & 3,316 & --- & Muy grande \\
+                    \hline
+                    $\eta^2$ (sector) & 0,839 & --- & Muy grande \\
+                    \hline
+                    $\omega^2$ (sector) & 0,838 & --- & Muy grande \\
+                    \hline
+                    $f$ de Cohen (sector) & 2,286 & --- & Muy grande \\
+                    \hline
+                    Potencia ($t$ de Welch) & $>0{,}999$ & --- & Máxima \\
+                    \hline
+                    Potencia (ANOVA) & $>0{,}999$ & --- & Máxima \\
+                    \hline
+                \end{tabular}
+                \label{efectos}
+            \end{center}
+        \end{table}
+
+        Una $d$ de 3,33 significa que las medias de Residencial y Comercial
+        distan más de tres desviaciones típicas, un orden de magnitud por encima
+        del umbral de 0,80 que Cohen considera efecto grande
+        \cite{cohen1988statistical}; el intervalo de confianza excluye por amplio
+        margen cualquier valor moderado, y la corrección de Hedges apenas altera
+        la cifra, como corresponde a este tamaño muestral. En el ANOVA, $\omega^2
+        = 0{,}838$ prácticamente coincide con $\eta^2 = 0{,}839$, lo que indica
+        que la proporción de varianza explicada no está inflada por el número de
+        grupos. La potencia máxima en ambos contrastes cierra el argumento: no se
+        rechazó $H_0$ gracias a un tamaño muestral generoso frente a un efecto
+        trivial, sino porque el efecto es genuinamente enorme.
+
+        \vspace{10pt}
+
+        La utilidad de esta distinción se ve en el contraste con la quinta
+        hipótesis, donde la misma muestra convive con un efecto minúsculo. Con
+        $n = 300$, la ecuación (\ref{rdetectable}) sitúa en $r_{\min} = 0{,}161$
+        la correlación más pequeña detectable con potencia del 80\,\%. El
+        coeficiente global observado, 0,063, queda por debajo de ese umbral,
+        mientras que el del sector Residencial, 0,595, lo supera con holgura. La
+        no significancia global no es, por tanto, un problema de tamaño muestral:
+        es que el coeficiente estandarizado se ha vuelto realmente pequeño, y la
+        Sección \ref{seccion_visualizacion} explica por qué.
+
+    \subsection{Robustez ante la heterocedasticidad}
+        \label{subsec_robustez_resultados}
+        El ANOVA de la Tabla \ref{anova_tabla} y el post-hoc de Tukey asumen
+        varianzas iguales, supuesto que la Tabla \ref{supuestos} rechaza. La
+        Tabla \ref{robustez} repite ambos contrastes con los procedimientos que
+        no lo exigen.
+
+        \begin{table}[H]
+            \centering
+            \caption{Contraste clásico frente a su versión robusta}
+            \begin{center}
+                \begin{tabular}{|>{\raggedright\arraybackslash}p{2.1cm}|c|c|c|}
+                    \hline
+                    \textbf{Procedimiento} & \textbf{$F$ / dif.} &
+                    \textbf{gl} & \textbf{$p$} \\
+                    \hline
+                    ANOVA clásico & 775,99 & 2 ; 297 & $<0{,}001$ \\
+                    \hline
+                    ANOVA de Welch & 830,22 & 2 ; 156,1 & $<0{,}001$ \\
+                    \hline
+                    Tukey: Ind.$-$Res. & $+700{,}70$ & 297 & $<0{,}001$ \\
+                    \hline
+                    G.-Howell: Ind.$-$Res. & $+700{,}70$ & 107,5 & $<0{,}001$ \\
+                    \hline
+                    Tukey: Com.$-$Res. & $+244{,}33$ & 297 & $<0{,}001$ \\
+                    \hline
+                    G.-Howell: Com.$-$Res. & $+244{,}33$ & 133,6 & $<0{,}001$ \\
+                    \hline
+                    Tukey: Ind.$-$Com. & $+456{,}37$ & 297 & $<0{,}001$ \\
+                    \hline
+                    G.-Howell: Ind.$-$Com. & $+456{,}37$ & 143,8 & $<0{,}001$ \\
+                    \hline
+                \end{tabular}
+                \label{robustez}
+            \end{center}
+        \end{table}
+
+        Las diferencias puntuales son idénticas, porque ambos post-hoc estiman la
+        misma cantidad; lo que cambia es su precisión. La Figura \ref{fig_forest}
+        superpone los dos conjuntos de intervalos y hace visible el intercambio:
+        Games-Howell estrecha el intervalo de la comparación entre los dos
+        sectores de menor varianza, Comercial y Residencial, y lo ensancha en las
+        dos que involucran a Industrial, que es el grupo más disperso. Tukey, al
+        repartir un error estándar común, sobreestima la incertidumbre de la
+        primera y la subestima en las otras dos.
+
+        \begin{figure}[!htbp]
+            \centering
+            \includegraphics[width=1\linewidth]{assets/images/figures/python/fig7_tukey_forest.png}
+            \caption{Comparaciones múltiples por pares: intervalos de confianza
+            del 95\,\% de Tukey HSD frente a Games-Howell (Matplotlib)}
+            \label{fig_forest}
+        \end{figure}
+
+        La conclusión sustantiva no se altera: el ANOVA de Welch rechaza la
+        igualdad de medias con un estadístico incluso mayor que el clásico
+        \cite{welch1951comparison}, y las tres comparaciones de Games-Howell
+        siguen siendo significativas con intervalos que no cruzan el cero
+        \cite{games1976pairwise}. El rechazo de la homocedasticidad afecta a la
+        precisión de cada intervalo, no a la decisión, de modo que los resultados
+        de las Tablas \ref{anova_tabla} y \ref{tukey_tabla} pueden sostenerse tal
+        como se reportan.
 
     \subsection{Relación entre temperatura y consumo}
         \label{seccion_regresion}
@@ -190,7 +333,8 @@
             \centering
             \includegraphics[width=1\linewidth]{assets/images/figures/python/fig4_regresion_temperatura.png}
             \caption{Relación temperatura-consumo sobre el conjunto agregado, con
-            la recta de mínimos cuadrados y su banda de confianza (seaborn)}
+            la recta de mínimos cuadrados, su banda de confianza y el resultado
+            del contraste de Pearson rotulado (seaborn)}
             \label{fig_regresion}
         \end{figure}
 

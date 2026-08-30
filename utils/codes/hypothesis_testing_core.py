@@ -1,23 +1,3 @@
-import os
-
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-import plotly.express as px
-from scipy import stats
-import statsmodels.api as sm
-from statsmodels.formula.api import ols
-from statsmodels.stats.multicomp import pairwise_tukeyhsd
-
-# --- Rutas del proyecto (relativas a la raiz) -----
-DATASET_PATH = "data/dataset/consumo_energia.csv"
-PROCESSED_DIR = "data/processed"
-FIGURES_DIR = "public/assets/images/figures/python/hypothesis"
-
-# Nivel de significancia usado en todas las pruebas
-ALPHA = 0.05
-
 def run_normality_and_levene(df):
     """Shapiro-Wilk por sector (normalidad) y Levene (homogeneidad de varianzas).
 
@@ -26,9 +6,10 @@ def run_normality_and_levene(df):
     """
     results = []
     groups = []
-    for sector, data in df.groupby("sector"):
-        stat, p_value = stats.shapiro(data["consumo_kwh"])
-        groups.append(data["consumo_kwh"])
+    for sector in SECTOR_ORDER:
+        data = sector_series(df, sector)
+        stat, p_value = stats.shapiro(data)
+        groups.append(data)
         results.append(
             {
                 "prueba": "Shapiro-Wilk",
@@ -63,8 +44,8 @@ def run_ttest(df):
     H0: el consumo medio del sector Residencial es igual al del Comercial.
     H1: los consumos medios son diferentes.
     """
-    residential = df[df["sector"] == "Residencial"]["consumo_kwh"]
-    commercial = df[df["sector"] == "Comercial"]["consumo_kwh"]
+    residential = sector_series(df, "Residencial")
+    commercial = sector_series(df, "Comercial")
 
     stat, p_value = stats.ttest_ind(residential, commercial, equal_var=False)
 
@@ -121,11 +102,14 @@ def run_correlation_regression(df):
 
     rows = [
         {
+            "ambito": "Global",
             "prueba": "Pearson + OLS (global)",
+            "n": len(df),
             "r_pearson": round(r, 4),
             "p_valor": round(p_value, 6),
             "intercepto_b0": round(model.params["const"], 2),
             "pendiente_b1": round(model.params["temperatura_c"], 2),
+            "desv_consumo": round(df["consumo_kwh"].std(ddof=1), 2),
             "r_cuadrado": round(model.rsquared, 4),
             "decision": "Relacion significativa" if p_value < ALPHA else "Sin relacion significativa",
         }
@@ -134,14 +118,29 @@ def run_correlation_regression(df):
     # Insight clave: la correlacion GLOBAL se diluye porque los sectores tienen
     # niveles de consumo muy distintos. Al analizar POR SECTOR, la relacion
     # temperatura-consumo si aparece (esto se ve claramente en las figuras 4 y 5).
-    for sector, data in df.groupby("sector"):
+    for sector in SECTOR_ORDER:
+        data = df[df["sector"] == sector]
         r_s, p_s = stats.pearsonr(data["temperatura_c"], data["consumo_kwh"])
+        # La pendiente por sector es la que demuestra que el efecto sobrevive a
+        # la agregacion aunque la correlacion estandarizada se desplome.
+        x_s = sm.add_constant(data["temperatura_c"])
+        model_s = sm.OLS(data["consumo_kwh"], x_s).fit()
         rows.append(
             {
+                "ambito": sector,
                 "prueba": f"Pearson ({sector})",
+                "n": len(data),
                 "r_pearson": round(r_s, 4),
                 "p_valor": round(p_s, 6),
-                "intercepto_b0": None,
-                "pendiente_b1": None,
-                "r_cuadrado": None,
+                "intercepto_b0": round(model_s.params["const"], 2),
+                "pendiente_b1": round(model_s.params["temperatura_c"], 2),
+                "desv_consumo": round(data["consumo_kwh"].std(ddof=1), 2),
+                "r_cuadrado": round(model_s.rsquared, 4),
                 "decision": "Relacion significativa" if p_s < ALPHA else "Sin relacion significativa",
+            }
+        )
+
+    out = pd.DataFrame(rows)
+    out.to_csv(f"{PROCESSED_DIR}/regression_results.csv", index=False, encoding="utf-8")
+    print("[OK] Correlacion y regresion -> regression_results.csv")
+    return model, out
