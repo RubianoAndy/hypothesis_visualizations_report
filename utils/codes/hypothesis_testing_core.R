@@ -1,5 +1,3 @@
-# --- 2.1 Normalidad con shapiro.test por sector ------------------------------
-# H0: los datos provienen de una distribucion normal
 normality_rows <- lapply(sector_order, function(s) {
   test <- shapiro.test(consumo(s))
   data.frame(
@@ -12,7 +10,6 @@ normality_rows <- lapply(sector_order, function(s) {
 })
 normality_r <- do.call(rbind, normality_rows)
 
-# Homogeneidad de varianzas con bartlett.test (equivalente a Levene)
 bartlett <- bartlett.test(consumo_kwh ~ sector, data = df)
 normality_r <- rbind(normality_r, data.frame(
   prueba = "Bartlett (R)",
@@ -24,8 +21,6 @@ normality_r <- rbind(normality_r, data.frame(
 write.csv(normality_r, file.path(processed_dir, "normality_tests_r.csv"), row.names = FALSE)
 cat("[OK] Normalidad y Bartlett -> normality_tests_r.csv\n")
 
-# --- 2.2 Prueba t con t.test -------------------------------------------------
-# H0: consumo medio Residencial == consumo medio Comercial
 residential <- consumo("Residencial")
 commercial <- consumo("Comercial")
 t_result <- t.test(residential, commercial, var.equal = FALSE)  # Welch
@@ -41,8 +36,6 @@ ttest_r <- data.frame(
 write.csv(ttest_r, file.path(processed_dir, "ttest_results_r.csv"), row.names = FALSE)
 cat("[OK] Prueba t -> ttest_results_r.csv\n")
 
-# --- 2.3 ANOVA con aov + TukeyHSD --------------------------------------------
-# H0: el consumo medio es igual en los 3 sectores
 anova_model <- aov(consumo_kwh ~ sector, data = df)
 anova_summary <- summary(anova_model)[[1]]
 write.csv(anova_summary, file.path(processed_dir, "anova_results_r.csv"))
@@ -56,8 +49,6 @@ cat("[OK] ANOVA (aov) -> anova_results_r.csv | TukeyHSD -> tukey_posthoc_r.csv\n
 f_anova <- anova_summary[["F value"]][1]
 p_anova <- anova_summary[["Pr(>F)"]][1]
 
-# --- 2.4 Correlacion (cor.test) y regresion lineal (lm) ----------------------
-# H0: no hay relacion lineal entre temperatura y consumo (r = 0)
 pearson <- cor.test(df$temperatura_c, df$consumo_kwh)
 linear_model <- lm(consumo_kwh ~ temperatura_c, data = df)
 
@@ -73,8 +64,7 @@ regression_r <- data.frame(
   r_cuadrado = round(summary(linear_model)$r.squared, 4),
   decision = ifelse(pearson$p.value < alpha, "Relacion significativa", "Sin relacion significativa")
 )
-# Insight clave: la correlacion global se diluye porque los sectores tienen
-# niveles de consumo muy distintos; por sector la relacion si aparece.
+
 sector_rows <- lapply(sector_order, function(s) {
   sub_df <- df[df$sector == s, ]
   test <- cor.test(sub_df$temperatura_c, sub_df$consumo_kwh)
@@ -101,12 +91,9 @@ cat("[OK] Correlacion y regresion -> regression_results_r.csv\n")
 n1 <- length(residential); n2 <- length(commercial)
 s1 <- sd(residential); s2 <- sd(commercial)
 
-# d de Cohen con desviacion combinada (pooled)
 pooled_sd <- sqrt(((n1 - 1) * s1^2 + (n2 - 1) * s2^2) / (n1 + n2 - 2))
 cohen_d <- (mean(commercial) - mean(residential)) / pooled_sd
-# g de Hedges: d corregida por el sesgo al alza en muestras pequenas
 hedges_g <- cohen_d * (1 - 3 / (4 * (n1 + n2) - 9))
-# IC del 95 % de d por la aproximacion normal del error estandar
 se_d <- sqrt((n1 + n2) / (n1 * n2) + cohen_d^2 / (2 * (n1 + n2)))
 d_ci <- cohen_d + c(-1, 1) * qnorm(1 - alpha / 2) * se_d
 
@@ -118,12 +105,9 @@ ss_total <- ss_between + ss_within
 ms_within <- ss_within / df_within
 
 eta_sq <- ss_between / ss_total
-# omega cuadrado penaliza el sesgo optimista de eta cuadrado
 omega_sq <- (ss_between - df_between * ms_within) / (ss_total + ms_within)
 cohen_f <- sqrt(eta_sq / (1 - eta_sq))
 
-# Potencia observada por la distribucion no central, la misma definicion que
-# usa statsmodels: asi la comparacion Python-R es exacta y no aproximada.
 ncp_t <- abs(cohen_d) * sqrt(n1 * n2 / (n1 + n2))
 df_t <- n1 + n2 - 2
 crit_t <- qt(1 - alpha / 2, df_t)
@@ -134,9 +118,6 @@ ncp_f <- nrow(df) * cohen_f^2
 power_anova <- pf(qf(1 - alpha, df_between, df_within), df_between, df_within,
                   ncp = ncp_f, lower.tail = FALSE)
 
-# Sensibilidad sobre la correlacion global: con n = 300, cual es la correlacion
-# mas pequena detectable con potencia del 80 %? Si el r observado queda por
-# debajo, la no significancia es cuestion de magnitud, no de tamano muestral.
 r_detectable <- tanh((qnorm(1 - alpha / 2) + qnorm(0.80)) / sqrt(nrow(df) - 3))
 
 effects_r <- data.frame(
@@ -165,8 +146,6 @@ welch_r <- data.frame(
 )
 write.csv(welch_r, file.path(processed_dir, "welch_anova_r.csv"), row.names = FALSE)
 
-# Games-Howell: error estandar de Welch por par y grados de libertad de
-# Welch-Satterthwaite, contrastados contra el rango estudentizado (ptukey).
 games_howell <- function(data) {
   k <- length(sector_order)
   pairs <- combn(sector_order, 2, simplify = FALSE)
