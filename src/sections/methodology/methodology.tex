@@ -48,17 +48,18 @@
             \label{generador}
         \end{equation}
 
-        El coeficiente 4 es el dato decisivo del experimento: la relación
-        temperatura consumo existe por diseño, es idéntica en los tres sectores y
-        su magnitud se conoce de antemano, lo que convierte al conjunto en un banco
+        El coeficiente 4 es el dato decisivo del experimento, puesto que la relación
+        temperatura-consumo existe por diseño, siendo idéntica en los tres sectores y
+        su magnitud se conoce de antemano, lo que convierte al datset en un banco
         de pruebas donde puede verificarse qué recupera cada estadístico. Los
         sectores, en cambio, se separan por niveles muy distintos, con medias de
         180, 420 y 900 kWh y desviaciones de 40, 90 y 180 kWh respectivamente.
 
     \subsection{Diseño del contraste}
-        Las cinco hipótesis se resumen en la Tabla \ref{hipotesis}. Las dos primeras
-        no son un trámite previo sino que condicionan a las siguientes, ya que
-        determinan si las pruebas paramétricas son aplicables y bajo qué variante.
+        El análisis comienza verificando los supuestos estadísticos que
+        determinan la aplicabilidad y selección de las pruebas paramétricas. A
+        continuación, la Tabla \ref{hipotesis} resume las cinco hipótesis
+        planteadas y las pruebas utilizadas para contrastarlas:
 
         \begin{table}[H]
             \centering
@@ -89,10 +90,10 @@
             \end{center}
         \end{table}
 
-        La comparación de dos medias emplea el estadístico de la ecuación
-        (\ref{welch}), que no asume varianzas iguales y ajusta los grados de
-        libertad mediante la aproximación de Welch-Satterthwaite
-        \cite{welch1947generalization}.
+        La comparación de dos medias utiliza el estadístico de la
+        ecuación (\ref{welch}), que permite trabajar sin asumir igualdad de
+        varianzas y ajusta los grados de libertad mediante la aproximación de
+        Welch-Satterthwaite \cite{welch1947generalization}.
 
         \begin{equation}
             t = \frac{\bar{x}_1 - \bar{x}_2}
@@ -100,19 +101,20 @@
             \label{welch}
         \end{equation}
 
-        Para tres o más grupos se recurre al ANOVA de un factor, cuyo estadístico
-        de la ecuación (\ref{anova}) contrasta la variabilidad entre grupos frente
-        a la que existe dentro de ellos \cite{montgomery2020design}.
+        Para comparar tres o más grupos se utiliza el ANOVA de un factor,
+        cuyo estadístico, definido en la ecuación (\ref{anova}), compara la
+        variabilidad entre grupos con la variabilidad dentro de ellos
+        \cite{montgomery2020design}.
 
         \begin{equation}
             F = \frac{SC_{entre} / (k-1)}{SC_{dentro} / (N-k)}
             \label{anova}
         \end{equation}
 
-        Un $F$ significativo indica que al menos una media difiere, pero no cuál,
-        por lo que se aplica el post-hoc de Tukey de la ecuación (\ref{tukey}), que
-        controla la tasa de error por familia al examinar las tres comparaciones
-        por pares \cite{tukey1949comparing}.
+        Un $F$ significativo indica que al menos una media difiere, sin embargo, 
+        no se conoce cuál, por lo que se aplica el post-hoc de Tukey de la ecuación 
+        (\ref{tukey}), que controla la tasa de error por familia al examinar las 
+        tres comparaciones por pares \cite{tukey1949comparing}.
 
         \begin{equation}
             HSD = q_{\alpha,k,N-k} \sqrt{\frac{CM_{dentro}}{n}}
@@ -135,24 +137,23 @@
             \label{ols}
         \end{equation}
 
-        Ambas cantidades se calculan a nivel global y, de forma separada, dentro de
+        Ambas cantidades se calculan a nivel global y de forma separada dentro de
         cada sector. Esa doble mirada es la que permite detectar el efecto de la
         agregación que se analiza en la Sección \ref{seccion_visualizacion}.
 
     \subsection{Magnitud del efecto y potencia}
         \label{subsec_efecto}
-        Un valor $p$ responde si una diferencia es distinguible del azar, no si
-        importa; con $n = 100$ por grupo casi cualquier separación alcanza la
-        significancia, de modo que reportar únicamente el valor $p$ reproduce el
-        problema que advierte la declaración de la ASA \cite{wasserstein2016asa}.
-        Cada contraste se acompaña por ello de su tamaño de efecto
-        \cite{cohen1988statistical}, \cite{lakens2013calculating}. Para la
-        comparación de dos medias se emplea la $d$ de Cohen de la ecuación
-        (\ref{cohend}), con $s_p$ la desviación combinada, y su corrección de
+        Un valor $p$ indica si una diferencia es estadísticamente distinguible 
+        del azar, pero no su relevancia práctica. Con $n=100$ por grupo, incluso 
+        diferencias pequeñas pueden resultar significativas, por lo que cada 
+        contraste se acompaña de un tamaño de efecto \cite{wasserstein2016asa}, 
+        \cite{cohen1988statistical}, \cite{lakens2013calculating}. Para comparar 
+        dos medias se utiliza la $d$ de Cohen de la ecuación (\ref{cohend}), 
+        basada en la desviación combinada $s_p$, junto con su corrección de 
         sesgo $g$ de Hedges.
 
         \begin{equation}
-            d = \frac{\bar{x}_1 - \bar{x}_2}{s_p}, \qquad
+            d = \frac{\bar{x}_1 - \bar{x}_2}{s_p}, \quad
             s_p = \sqrt{\frac{(n_1-1)s_1^2 + (n_2-1)s_2^2}{n_1 + n_2 - 2}}
             \label{cohend}
         \end{equation}
@@ -162,20 +163,19 @@
         descuenta el sesgo optimista de la primera.
 
         \begin{equation}
-            \eta^2 = \frac{SC_{entre}}{SC_{total}}, \qquad
+            \eta^2 = \frac{SC_{entre}}{SC_{total}}, \quad
             \omega^2 = \frac{SC_{entre} - (k-1)\,CM_{dentro}}
                             {SC_{total} + CM_{dentro}}
             \label{omega}
         \end{equation}
 
-        La potencia observada se calcula sobre la distribución no central
-        correspondiente a cada estadístico. A ella se añade un análisis de
-        sensibilidad sobre la quinta hipótesis: la correlación más pequeña
-        detectable con potencia $1-\beta = 0{,}80$ y $n$ observaciones se obtiene
-        invirtiendo la transformación de Fisher según la ecuación
-        (\ref{rdetectable}). Ese umbral separa dos explicaciones posibles de una
-        correlación no significativa, la falta de tamaño muestral y la pequeñez
-        real del coeficiente.
+        La potencia observada se calcula a partir de la distribución no
+        central de cada estadístico. Para la quinta hipótesis se añade un
+        análisis de sensibilidad que determina, mediante la inversión de la
+        transformación de Fisher y la ecuación (\ref{rdetectable}), la
+        correlación mínima detectable con una potencia de $1-\beta=0{,}80$. Este
+        umbral permite distinguir entre una correlación no significativa por
+        falta de tamaño muestral y otra realmente pequeña.
 
         \begin{equation}
             r_{\min} = \tanh\!\left(\frac{z_{1-\alpha/2} + z_{1-\beta}}
@@ -185,15 +185,13 @@
 
     \subsection{Contrastes robustos a la heterocedasticidad}
         \label{subsec_robustez}
-        Tanto el ANOVA clásico como el post-hoc de Tukey asumen varianzas
-        iguales, supuesto que la segunda hipótesis rechaza. En lugar de dejar
-        constancia de ello como una limitación, todo el bloque de comparación de
-        medias se repite con los procedimientos que no lo exigen: el ANOVA de
-        Welch de la ecuación (\ref{welchanova}), que pondera cada grupo por
-        $w_i = n_i/s_i^2$ \cite{welch1951comparison}, y el post-hoc de
-        Games-Howell de la ecuación (\ref{gameshowell}), que sustituye el error
-        estándar común de Tukey por el de Welch en cada par y ajusta los grados
-        de libertad mediante Welch-Satterthwaite \cite{games1976pairwise}.
+        Dado que la segunda hipótesis rechaza el supuesto de igualdad de
+        varianzas, el ANOVA clásico y el post-hoc de Tukey no son adecuados, por
+        ello, la comparación se repite con métodos robustos, el ANOVA de Welch,
+        que pondera los grupos mediante $w_i=n_i/s_i^2$ \cite{welch1951comparison}, 
+        y el post-hoc de Games-Howell, que emplea el error estándar de Welch 
+        para cada par y ajusta los grados de libertad mediante Welch-Satterthwaite 
+        \cite{games1976pairwise}.
 
         \begin{equation}
             F_W = \frac{\dfrac{1}{k-1}\sum w_i (\bar{x}_i - \bar{x}_w)^2}
@@ -208,20 +206,17 @@
             \label{gameshowell}
         \end{equation}
 
-        Si ambos procedimientos conducen a la misma decisión, la conclusión queda
-        respaldada con independencia del supuesto; si divergieran, habría que
-        reportar la versión robusta. El resultado de esa comprobación se presenta
-        en la Sección \ref{subsec_robustez_resultados}.
+        Si ambos procedimientos conducen a la misma decisión, la conclusión se 
+        considera consistente, en caso contrario, se reporta el resultado del 
+        método robusto.
 
     \subsection{Plan de visualización}
         \label{subsec_plan_visual}
-        Cada hipótesis contrastada tiene asignada al menos una figura, y cada
-        figura lleva impreso el estadístico y el valor $p$ que representa, de modo
-        que pueda leerse sin emparejarla con la tabla correspondiente. Las nueve
-        figuras se construyen dos veces, en Python y en R, sobre estadísticos
-        calculados de forma independiente en cada entorno. La Tabla
-        \ref{plan_figuras} resume esa correspondencia entre hipótesis, biblioteca
-        y figura.
+        Cada hipótesis se acompaña de al menos una figura que incluye el
+        estadístico y el valor $p$, permitiendo interpretar el resultado sin
+        recurrir a la tabla correspondiente. Las nueve figuras se replican de
+        forma independiente en Python y R. La Tabla \ref{plan_figuras} resume la
+        correspondencia entre hipótesis, biblioteca y figura.
 
         \begin{table}[H]
             \centering
@@ -265,9 +260,8 @@
             \end{center}
         \end{table}
 
-        Las dos figuras interactivas se exportan como HTML autónomo, junto a sus 
-        equivalentes de R generados con \texttt{ggplotly}.
-        En ellas la interacción cumple una función analítica y no decorativa: aislar
-        un sector desde la leyenda equivale a ejecutar el análisis condicionado que
-        sostiene el argumento de este informe, y el \textit{hover} identifica
-        cliente y región sin volver a los datos.
+        Las dos figuras interactivas se exportan como HTML autónomo, junto con 
+        sus equivalentes en R generados con \texttt{ggplotly}. La interacción 
+        tiene un propósito analítico: permite aislar sectores para examinar 
+        su comportamiento y consultar información de cada cliente sin recurrir 
+        a los datos originales.
