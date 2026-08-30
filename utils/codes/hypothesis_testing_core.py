@@ -20,7 +20,6 @@ def run_normality_and_levene(df):
             }
         )
 
-    # Levene compara las varianzas de los 3 sectores a la vez
     stat, p_value = stats.levene(*groups)
     results.append(
         {
@@ -74,12 +73,10 @@ def run_anova_tukey(df):
     H0: el consumo medio es igual en los 3 sectores.
     H1: al menos un sector tiene un consumo medio diferente.
     """
-    # ANOVA con formula estilo R: consumo ~ sector
     model = ols("consumo_kwh ~ C(sector)", data=df).fit()
     anova_table = sm.stats.anova_lm(model, typ=2)
     anova_table.to_csv(f"{PROCESSED_DIR}/anova_results.csv", encoding="utf-8")
 
-    # Tukey dice ENTRE CUALES sectores hay diferencias
     tukey = pairwise_tukeyhsd(df["consumo_kwh"], df["sector"], alpha=ALPHA)
     tukey_df = pd.DataFrame(tukey.summary().data[1:], columns=tukey.summary().data[0])
     tukey_df.to_csv(f"{PROCESSED_DIR}/tukey_posthoc.csv", index=False, encoding="utf-8")
@@ -96,7 +93,6 @@ def run_correlation_regression(df):
     """
     r, p_value = stats.pearsonr(df["temperatura_c"], df["consumo_kwh"])
 
-    # Regresion lineal simple: consumo = b0 + b1 * temperatura
     x = sm.add_constant(df["temperatura_c"])
     model = sm.OLS(df["consumo_kwh"], x).fit()
 
@@ -115,14 +111,9 @@ def run_correlation_regression(df):
         }
     ]
 
-    # Insight clave: la correlacion GLOBAL se diluye porque los sectores tienen
-    # niveles de consumo muy distintos. Al analizar POR SECTOR, la relacion
-    # temperatura-consumo si aparece (esto se ve claramente en las figuras 4 y 5).
     for sector in SECTOR_ORDER:
         data = df[df["sector"] == sector]
         r_s, p_s = stats.pearsonr(data["temperatura_c"], data["consumo_kwh"])
-        # La pendiente por sector es la que demuestra que el efecto sobrevive a
-        # la agregacion aunque la correlacion estandarizada se desplome.
         x_s = sm.add_constant(data["temperatura_c"])
         model_s = sm.OLS(data["consumo_kwh"], x_s).fit()
         rows.append(

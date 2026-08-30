@@ -36,7 +36,6 @@ def games_howell(df):
         diff = gb.mean() - ga.mean()
 
         se = np.sqrt(va / na + vb / nb)
-        # Grados de libertad de Welch-Satterthwaite para este par
         df_wl = (va / na + vb / nb) ** 2 / (
             (va / na) ** 2 / (na - 1) + (vb / nb) ** 2 / (nb - 1)
         )
