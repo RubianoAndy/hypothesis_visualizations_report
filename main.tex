@@ -10,6 +10,8 @@
 \usepackage{xcolor}
 \usepackage{float}
 \usepackage{cuted}     % entorno strip: bloque a doble columna que no flota
+\setlength{\stripsep}{5pt plus 2pt minus 2pt} % separación compacta del strip,
+                                              % deja sitio para reanudar texto
 \usepackage{capt-of}   % \captionof, para rotular dentro de un strip
 \usepackage{tcolorbox}
 \usepackage{eso-pic}
@@ -111,20 +113,16 @@
 
     \begin{abstract}
         Este informe analiza el consumo energético mensual de 300
-        clientes de los sectores Residencial, Comercial e Industrial 
-        mediante pruebas de hipótesis, regresión y visualización. Primero 
-        se verifican los supuestos estadísticos y ante la desigualdad 
-        de varianzas, se emplean métodos robustos como Welch y 
-        Games-Howell. Los resultados muestran diferencias claras entre 
-        los sectores, que explican el 83,9\% de la variabilidad del 
-        consumo ($\omega^2=0,838$). El principal hallazgo aparece al 
-        analizar la relación entre temperatura y consumom, puesto que 
-        la correlación no es significativa al considerar todos los
-        clientes ($r=0,063$; $p=0,277$), sí lo es dentro del sector
-        Residencial ($r=0,595$; $p<0,001$). La visualización revela que 
-        la combinación de los sectores oculta esta relación, evidenciada 
-        por tres rectas paralelas, finalmente, los resultados se replican 
-        de forma independiente en R, confirmando su consistencia.
+        clientes de los sectores Residencial, Comercial e Industrial mediante
+        pruebas de hipótesis, regresión y visualización. Ante la desigualdad de
+        varianzas, se emplean métodos robustos como Welch y Games-Howell. Los
+        resultados muestran diferencias claras entre sectores, que explican el
+        83,9\% de la variabilidad del consumo ($\omega^2=0,838$). En la relación
+        entre temperatura y consumo, la correlación no es significativa en el
+        conjunto de clientes ($r=0,063$; $p=0,277$), pero sí en el sector
+        Residencial ($r=0,595$; $p<0,001$). La visualización evidencia que la
+        combinación de sectores oculta esta relación, mientras que los
+        resultados replicados en R confirman su consistencia.
     \end{abstract}
 
     \vspace{10pt}
