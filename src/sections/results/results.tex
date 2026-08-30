@@ -48,12 +48,14 @@
 
         \begin{strip}
             \centering
-            \includegraphics[width=0.90\linewidth]{assets/images/figures/python/hypothesis/qqplots_normalidad.png}
+            \includegraphics[width=0.92\linewidth]{assets/images/figures/python/hypothesis/qqplots_normalidad.png}
             \captionof{figure}{Diagnóstico gráfico de normalidad en los tres sectores mediante
             gráficos cuantil-cuantil (Matplotlib). Cada panel rotula el estadístico
             $W$ de Shapiro-Wilk y su valor $p$}
             \label{fig_qq}
         \end{strip}
+
+        \clearpage
 
         El histograma representa el centro de la distribución, pero la
         Figura \ref{fig_qq} permite evaluar mejor las colas. En los tres
@@ -62,9 +64,13 @@
         analíticamente \cite{shapiro1965analysis}.
 
     \subsection{Comparación de medias}
-        La Tabla \ref{ttest} presenta el contraste entre los sectores Residencial y
-        Comercial. La diferencia es tan marcada que el estadístico deja el resultado
-        fuera de cualquier duda razonable.
+        La Tabla \ref{ttest} compara el consumo promedio de dos sectores, el
+        Residencial consume \textbf{187 kWh} al mes, mientras que el Comercial
+        consume \textbf{431 kWh}, es decir, más del doble. Este salto de 244 kWh
+        es tan consistente que ningún cliente residencial típico se parece a 
+        ningún cliente comercial típico. El valor $p < 10^{-49}$ (prácticamente 
+        cero) niega cualquier posibilidad de que esta diferencia sea fruto del 
+        azar.
 
         \begin{table}[H]
             \centering
@@ -85,9 +91,12 @@
             \end{center}
         \end{table}
 
-        Extendiendo la comparación a los tres sectores, el ANOVA de la Tabla
-        \ref{anova_tabla} rechaza la igualdad de medias con un estadístico de
-        magnitud excepcional.
+        Extendiendo el análisis a los tres sectores (Residencial, Comercial e
+        Industrial), el ANOVA de la Tabla \ref{anova_tabla} rechaza la hipótesis
+        de que consuman lo mismo. El estadístico $F=775,99$ es extremadamente
+        grande e indica que la variabilidad entre sectores es 776 veces más 
+        grande que la variabilidad dentro de cada sector. Con
+        $p < 10^{-118}$, concluyendo que el sector determina el consumo.
 
         \begin{table}[H]
             \centering
@@ -108,11 +117,12 @@
             \end{center}
         \end{table}
 
-        La razón entre la suma de cuadrados del factor y la total indica que el
-        sector explica el \textbf{83,9\,\%} de la variabilidad del consumo, una
-        proporción que anticipa el problema de la sección siguiente: si el sector
-        acapara esa fracción de la varianza, cualquier otro efecto compite en
-        desventaja por lo que queda.
+        El sector explica el \textbf{83,9\%} de la variabilidad total del
+        consumo, lo que evidencia una fuerte diferenciación entre los grupos 
+        y el 16,1\% restante corresponde a variaciones individuales dentro de 
+        cada sector. Esta alta proporción anticipa un aspecto relevante del 
+        análisis posterior, porque al concentrar el sector y la mayor parte de 
+        la variabilidad, otros factores pueden quedar parcialmente ocultos.
 
         \begin{table}[H]
             \centering
@@ -137,15 +147,16 @@
             \end{center}
         \end{table}
 
-        El post-hoc de la Tabla \ref{tukey_tabla} confirma que \textbf{las tres}
-        comparaciones son significativas y que ningún par de sectores puede tratarse
-        como equivalente. Las Figuras \ref{fig_boxplot} y \ref{fig_medias}
-        traducen ambas tablas: la primera muestra cajas sin traslape con amplitudes
-        crecientes, que sostienen a la vez el rechazo del ANOVA y el de la
-        homogeneidad de varianzas; la segunda convierte el resultado de Tukey en
-        intervalos de confianza que no se solapan.
+        El post-hoc de la Tabla \ref{tukey_tabla} confirma que las tres
+        comparaciones son significativas y que ningún par de sectores 
+        puede tratarse como equivalente. Las Figuras \ref{fig_boxplot} y 
+        \ref{fig_medias} traducen ambas tablas: la primera muestra cajas 
+        sin traslape con amplitudes crecientes, que sostienen a la vez el 
+        rechazo del ANOVA y el de la homogeneidad de varianzas; la segunda 
+        convierte el resultado de Tukey en intervalos de confianza que no 
+        se solapan.
 
-        \begin{figure}[!htbp]
+        \begin{figure}[H]
             \centering
             \includegraphics[width=1\linewidth]{assets/images/figures/python/hypothesis/boxplot_sectores.png}
             \caption{Distribución del consumo por sector: violín, caja e
@@ -154,7 +165,7 @@
             \label{fig_boxplot}
         \end{figure}
 
-        \begin{figure}[!htbp]
+        \begin{figure}[H]
             \centering
             \includegraphics[width=1\linewidth]{assets/images/figures/python/hypothesis/medias_ic95.png}
             \caption{Consumo medio por sector con intervalos de confianza del
@@ -166,7 +177,7 @@
     \subsection{Magnitud del efecto y potencia}
         \label{subsec_efecto_resultados}
         Los valores $p$ de las Tablas \ref{ttest} y \ref{anova_tabla} son tan
-        extremos que dejan de ser informativos: con $n = 100$ por grupo indican
+        extremos que dejan de ser informativos, con $n = 100$ por grupo indican
         que la diferencia existe, pero no cuánto vale. La Tabla \ref{efectos}
         cuantifica esa magnitud.
 
@@ -199,29 +210,25 @@
             \end{center}
         \end{table}
 
-        Una $d$ de 3,33 significa que las medias de Residencial y Comercial
-        distan más de tres desviaciones típicas, un orden de magnitud por encima
-        del umbral de 0,80 que Cohen considera efecto grande
-        \cite{cohen1988statistical}; el intervalo de confianza excluye por amplio
-        margen cualquier valor moderado, y la corrección de Hedges apenas altera
-        la cifra, como corresponde a este tamaño muestral. En el ANOVA, $\omega^2
-        = 0{,}838$ prácticamente coincide con $\eta^2 = 0{,}839$, lo que indica
-        que la proporción de varianza explicada no está inflada por el número de
-        grupos. La potencia máxima en ambos contrastes cierra el argumento: no se
-        rechazó $H_0$ gracias a un tamaño muestral generoso frente a un efecto
-        trivial, sino porque el efecto es genuinamente enorme.
+        Una $d=3,33$ indica una diferencia superior a tres desviaciones
+        típicas entre Residencial y Comercial, muy por encima del umbral de
+        efecto grande de 0,80 propuesto por Cohen \cite{cohen1988statistical}.
+        El intervalo de confianza respalda esta magnitud y la corrección de
+        Hedges apenas modifica la estimación. Asimismo, $\omega^2=0{,}838$ es
+        prácticamente igual a $\eta^2=0{,}839$, lo que confirma que el 83,8\% de la
+        varianza explicada no se debe al número de grupos. En conjunto, estos
+        resultados evidencian un efecto genuinamente grande, no solo un
+        resultado asociado al tamaño muestral.
 
         \vspace{10pt}
 
-        La utilidad de esta distinción se ve en el contraste con la quinta
-        hipótesis, donde la misma muestra convive con un efecto minúsculo. Con
-        $n = 300$, la ecuación (\ref{rdetectable}) sitúa en $r_{\min} = 0{,}161$
-        la correlación más pequeña detectable con potencia del 80\,\%. El
-        coeficiente global observado, 0,063, queda por debajo de ese umbral,
-        mientras que el del sector Residencial, 0,595, lo supera con holgura. La
-        no significancia global no es, por tanto, un problema de tamaño muestral:
-        es que el coeficiente estandarizado se ha vuelto realmente pequeño, y la
-        Sección \ref{seccion_visualizacion} explica por qué.
+        Esta distinción se evidencia en la quinta hipótesis, donde con
+        $n=300$ la ecuación (\ref{rdetectable}) establece $r_{\min}=0{,}161$
+        como la correlación mínima detectable con una potencia del 80\%. El
+        coeficiente global observado ($r=0,063$) queda por debajo de este umbral,
+        mientras que el de Residencial ($r=0,595$) lo supera ampliamente, por
+        tanto, la no significancia global no responde a un tamaño muestral
+        insuficiente, sino a la baja magnitud de la correlación.
 
     \subsection{Robustez ante la heterocedasticidad}
         \label{subsec_robustez_resultados}
@@ -234,7 +241,7 @@
             \centering
             \caption{Contraste clásico frente a su versión robusta}
             \begin{center}
-                \begin{tabular}{|>{\raggedright\arraybackslash}p{2.1cm}|c|c|c|}
+                \begin{tabular}{|l|c|c|c|}
                     \hline
                     \textbf{Procedimiento} & \textbf{$F$ / dif.} &
                     \textbf{gl} & \textbf{$p$} \\
@@ -260,16 +267,13 @@
             \end{center}
         \end{table}
 
-        Las diferencias puntuales son idénticas, porque ambos post-hoc estiman la
-        misma cantidad; lo que cambia es su precisión. La Figura \ref{fig_forest}
-        superpone los dos conjuntos de intervalos y hace visible el intercambio:
-        Games-Howell estrecha el intervalo de la comparación entre los dos
-        sectores de menor varianza, Comercial y Residencial, y lo ensancha en las
-        dos que involucran a Industrial, que es el grupo más disperso. Tukey, al
-        repartir un error estándar común, sobreestima la incertidumbre de la
-        primera y la subestima en las otras dos.
+        La Figura \ref{fig_forest} muestra que Games-Howell estrecha el intervalo 
+        entre Comercial y Residencial, pero lo amplía en las comparaciones con
+        Industrial, el grupo más disperso. Tukey, al asumir un error estándar
+        común, sobreestima la incertidumbre en la primera comparación y la
+        subestima en las otras dos.
 
-        \begin{figure}[!htbp]
+        \begin{figure}[H]
             \centering
             \includegraphics[width=1\linewidth]{assets/images/figures/python/hypothesis/tukey_forest.png}
             \caption{Comparaciones múltiples por pares: intervalos de confianza
@@ -277,21 +281,17 @@
             \label{fig_forest}
         \end{figure}
 
-        La conclusión sustantiva no se altera: el ANOVA de Welch rechaza la
-        igualdad de medias con un estadístico incluso mayor que el clásico
-        \cite{welch1951comparison}, y las tres comparaciones de Games-Howell
-        siguen siendo significativas con intervalos que no cruzan el cero
-        \cite{games1976pairwise}. El rechazo de la homocedasticidad afecta a la
-        precisión de cada intervalo, no a la decisión, de modo que los resultados
-        de las Tablas \ref{anova_tabla} y \ref{tukey_tabla} pueden sostenerse tal
-        como se reportan.
+        El ANOVA de Welch rechaza la igualdad de medias con un estadístico incluso 
+        mayor que el clásico y las tres comparaciones de Games-Howell siguen siendo 
+        significativas con intervalos que no cruzan el cero. El rechazo de la 
+        homocedasticidad afecta a la precisión de cada intervalo, no a la decisión, 
+        de modo que los resultados de las Tablas \ref{anova_tabla} y \ref{tukey_tabla} 
+        pueden sostenerse tal como se reportan.
 
     \subsection{Relación entre temperatura y consumo}
         \label{seccion_regresion}
-        El contraste de la quinta hipótesis produce el resultado que articula el
-        resto del informe. La Tabla \ref{correlacion} presenta el coeficiente de
-        Pearson calculado sobre el conjunto completo y, por separado, dentro de cada
-        sector.
+        La Tabla \ref{correlacion} presenta el coeficiente de Pearson calculado sobre 
+        el conjunto completo y por separado, dentro de cada sector.
 
         \begin{table}[H]
             \centering
@@ -316,12 +316,11 @@
             \end{center}
         \end{table}
 
-        La regresión global estimada es $\hat{Y} = 425{,}65 + 3{,}42\,T$ con
-        $R^2 = 0{,}004$. Leída de forma aislada, la primera fila de la Tabla
-        \ref{correlacion} autorizaría a concluir que la temperatura no influye en el
-        consumo, conclusión que la ecuación (\ref{generador}) desmiente por
-        construcción. La Figura \ref{fig_regresion} muestra la nube global sobre la
-        que se calcula ese coeficiente.
+        La regresión global es $\hat{Y}=425{,}65+3{,}42,T$, con $R^2=0{,}004$, aunque 
+        este resultado sugiere una relación prácticamente nula entre temperatura y 
+        consumo, la ecuación (\ref{generador}) muestra que dicha conclusión no refleja 
+        el comportamiento por sector. La Figura \ref{fig_regresion} presenta la nube 
+        global sobre la que se obtiene este coeficiente.
 
         \begin{figure}[!htbp]
             \centering
@@ -332,8 +331,8 @@
             \label{fig_regresion}
         \end{figure}
 
-        La figura explica la contradicción antes que cualquier estadístico: la nube
-        aparece dividida en tres franjas horizontales superpuestas, cada una
-        correspondiente a un sector, y la recta global atraviesa las tres sin
-        describir a ninguna. La dispersión vertical que separa las franjas no
-        procede de la temperatura sino del sector, y es la que domina el cálculo.
+        Acá se revela la contradicción, la nube se divide en tres franjas horizontales, 
+        correspondientes a cada sector, mientras la recta global atraviesa las tres sin 
+        representar adecuadamente a ninguna. La separación vertical entre franjas 
+        responde al sector y no a la temperatura, dominando así la variabilidad 
+        observada.

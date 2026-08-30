@@ -1,48 +1,42 @@
 \section{El papel de la visualización en el contraste de hipótesis}
     \label{seccion_visualizacion}
     \subsection{Lo que la figura interactiva revela}
-        Al colorear la misma nube de la Figura \ref{fig_regresion} según el sector y
-        ajustar una recta dentro de cada grupo, la estructura que el coeficiente
-        global oculta se vuelve inmediata. La Figura \ref{fig_plotly} presenta esa
-        vista, construida con Plotly, donde aparecen \textbf{tres rectas de
-        pendiente positiva, aproximadamente paralelas y separadas verticalmente}
-        por el nivel de cada sector.
+        La Figura \ref{fig_plotly} presenta esa vista, construida con Plotly, 
+        donde aparecen tres rectas de pendiente positiva, aproximadamente 
+        paralelas y separadas verticalmente por el nivel de cada sector.
 
-        \begin{figure*}[!t]
+        \begin{strip}
             \centering
-            \includegraphics[width=0.82\linewidth]{assets/images/figures/python/hypothesis/dispersion_sectores.png}
-            \caption{Consumo frente a temperatura desagregado por sector, con una
+            \includegraphics[width=0.90\linewidth]{assets/images/figures/python/hypothesis/dispersion_sectores.png}
+            \captionof{figure}{Consumo frente a temperatura desagregado por sector, con una
             recta de regresión ajustada dentro de cada grupo. Versión estática de la
             figura interactiva construida con Plotly, que en el navegador permite
             aislar sectores desde la leyenda, hacer zoom y consultar el
             identificador y la región de cada cliente}
             \label{fig_plotly}
-        \end{figure*}
+        \end{strip}
 
-        La interactividad no es aquí un recurso decorativo. Aislar un sector desde
-        la leyenda equivale a ejecutar visualmente el análisis condicionado de la
-        Tabla \ref{correlacion}, y el \textit{hover} permite verificar si un punto
-        extremo corresponde a una región cálida o a un cliente atípico, distinción
-        que un gráfico estático obliga a resolver volviendo a los datos.
+        Aislar un sector desde la leyenda permite visualizar el análisis
+        condicionado de la Tabla \ref{correlacion}, mientras que el
+        \textit{hover} permite distinguir si un punto extremo corresponde a una
+        región cálida o a un cliente atípico, algo que un gráfico estático no
+        permite.
 
-    \subsection{Por qué la correlación cae y la pendiente no}
-        La explicación admite una formulación exacta. El coeficiente de Pearson y la
-        pendiente de la regresión se relacionan mediante la ecuación
-        (\ref{relacion_r_b}).
+    \subsection{¿Por qué la correlación cae y la pendiente no?}
+        El coeficiente de Pearson y la pendiente de la regresión se relacionan 
+        mediante la siguiente ecuación:
 
         \begin{equation}
             r = b_1 \, \frac{s_T}{s_Y}
             \label{relacion_r_b}
         \end{equation}
 
-        La temperatura se asigna con independencia del sector, lo que se verifica
-        contrastando su igualdad de medias entre grupos ($F = 0{,}23$; $p = 0{,}798$).
-        En consecuencia, al mezclar los sectores el numerador de la ecuación
-        (\ref{relacion_r_b}) apenas se altera: la pendiente global estimada es
-        $b_1 = 3{,}42$, muy próxima al valor 4 fijado en la ecuación
-        (\ref{generador}). Lo que cambia drásticamente es el denominador, porque la
-        distancia entre los centros de los tres sectores infla la desviación
-        estándar del consumo, tal como recoge la Tabla \ref{atenuacion}.
+        La temperatura se asigna independientemente del sector, como
+        confirma la igualdad de medias ($F=0{,}23$; $p=0{,}798$). Por tanto, la
+        pendiente global ($b_1=3{,}42$) se mantiene cercana al valor 4 de la
+        ecuación (\ref{generador}), mientras que la separación entre sectores
+        aumenta la variabilidad del consumo y reduce la correlación global
+        (Tabla \ref{atenuacion}).
 
         \begin{table}[H]
             \centering
@@ -67,26 +61,24 @@
             \end{center}
         \end{table}
 
-        El mecanismo queda así identificado con precisión: \textbf{el estimador del
-        efecto sobrevive a la agregación, la medida de asociación estandarizada no}.
-        Con $s_T = 5{,}84$, la ecuación (\ref{relacion_r_b}) devuelve
-        $3{,}42 \times 5{,}84 / 317{,}49 = 0{,}063$, exactamente el valor observado.
-        No se trata, por tanto, de una inversión del signo como en la paradoja de
-        Simpson clásica \cite{simpson1951interpretation}, sino de una atenuación por
-        dilución: la varianza entre sectores actúa como ruido frente a una señal que
-        permanece intacta \cite{kievit2013simpson}.
+        El efecto estimado se mantiene tras la agregación, pero la
+        asociación estandarizada se atenúa. Con $s_T=5{,}84$, la ecuación
+        (\ref{relacion_r_b}) produce $r=0{,}063$, igual al valor observado. No
+        hay inversión del signo, sino una atenuación por dilución: la
+        variabilidad entre sectores actúa como ruido frente a una señal que
+        permanece.
 
-        \begin{figure*}[!t]
+        \begin{strip}
             \centering
-            \includegraphics[width=0.95\linewidth]{assets/images/figures/python/hypothesis/atenuacion.png}
-            \caption{Descomposición gráfica de la identidad $r = b_1 s_T / s_Y$
+            \includegraphics[width=0.90\linewidth]{assets/images/figures/python/hypothesis/atenuacion.png}
+            \captionof{figure}{Descomposición gráfica de la identidad $r = b_1 s_T / s_Y$
             sobre los cuatro ámbitos de análisis (seaborn). El panel izquierdo
             muestra que la pendiente global se mantiene cerca del valor de diseño;
             el central, que la desviación del consumo se multiplica por casi ocho
             al mezclar los sectores; el derecho, la consecuencia sobre la
             correlación}
             \label{fig_atenuacion}
-        \end{figure*}
+        \end{strip}
 
         La Figura \ref{fig_atenuacion} traduce esa aritmética en tres paneles que
         pueden leerse de izquierda a derecha como una cadena causal. La pendiente
@@ -115,33 +107,32 @@
         contradicción que articula este informe solo aparece al poner un resultado
         junto a otro. La Figura \ref{fig_dashboard} presenta ese tablero.
 
-        \begin{figure*}[!t]
+        \begin{strip}
             \centering
-            \includegraphics[width=0.93\linewidth]{assets/images/figures/python/hypothesis/dashboard.png}
-            \caption{Tablero interactivo que reúne las cuatro decisiones del
+            \includegraphics[width=0.90\linewidth]{assets/images/figures/python/hypothesis/dashboard.png}
+            \captionof{figure}{Tablero interactivo que reúne las cuatro decisiones del
             protocolo (Plotly). El código de color del panel B distingue las
             hipótesis rechazadas de las que no lo son. Versión estática de la
             figura interactiva, que en el navegador permite hacer zoom, aislar
             series y consultar el identificador y la región de cada cliente}
             \label{fig_dashboard}
-        \end{figure*}
+        \end{strip}
 
-        La lectura conjunta es lo que aporta el formato. El panel A establece que
-        el sector separa las distribuciones sin traslape; el panel B muestra que
-        ese mismo conjunto de datos declara no significativa la correlación global
-        mientras la del sector Residencial es la mayor de las cuatro; el panel C
-        exhibe la recta agregada atravesando tres franjas que no describe; y el
-        panel D identifica el término responsable, la desviación del consumo, que
-        en el ámbito global supera incluso a la del sector más disperso. Los cuatro
-        paneles proceden de los mismos 300 registros, y es su yuxtaposición la que
-        convierte un conjunto de valores $p$ en un diagnóstico.
+        El panel A establece que el sector separa las distribuciones sin traslape, 
+        el panel B muestra que ese mismo conjunto de datos declara no significativa 
+        la correlación global mientras la del sector Residencial es la mayor de las 
+        cuatro, el panel C exhibe la recta agregada atravesando tres franjas que no 
+        describe y el panel D identifica el término responsable, la desviación del 
+        consumo, que en el ámbito global supera incluso a la del sector más disperso. 
+        Los cuatro paneles proceden de los mismos 300 registros, y es su yuxtaposición 
+        la que convierte un conjunto de valores $p$ en un diagnóstico.
 
     \subsection{Verificación cruzada y reproducibilidad}
-        La Tabla \ref{verificacion} compara las cifras obtenidas en ambos entornos.
-        La coincidencia dígito a dígito confirma que los resultados son propiedad de
+        La Tabla \ref{verificacion} compara las cifras obtenidas en ambos entornos,
+        la coincidencia dígito a dígito confirma que los resultados son propiedad de
         los datos y no del software empleado.
 
-        \begin{table}[!htbp]
+        \begin{table}[H]
             \centering
             \caption{Verificación cruzada entre Python y R}
             \begin{center}
@@ -174,60 +165,84 @@
             \end{center}
         \end{table}
 
-        La coincidencia abarca también las medidas que no proceden de una función
-        de biblioteca. Los tamaños de efecto, la potencia y el post-hoc de
-        Games-Howell se programaron de cero en ambos entornos a partir de sus
-        fórmulas cerradas, sin recurrir a paquetes especializados, y aun así los
-        cuatro primeros decimales coinciden; es una verificación más exigente que
-        la de las pruebas estándar, donde dos implementaciones maduras del mismo
-        algoritmo podrían coincidir por compartir su origen.
+        Los tamaños de efecto, la potencia y el post-hoc de Games-Howell se programaron 
+        de cero en ambos entornos a partir de sus fórmulas cerradas, sin recurrir a 
+        paquetes especializados y aun así los cuatro primeros decimales coinciden, siendo 
+        una verificación más exigente que la de las pruebas estándar, donde dos 
+        implementaciones maduras del mismo algoritmo podrían coincidir por compartir 
+        su origen.
 
         \vspace{10pt}
 
         La única discrepancia corresponde a la homogeneidad de varianzas y es
-        esperada, puesto que Levene \cite{levene1960robust} se apoya en las
-        desviaciones absolutas respecto de la media y Bartlett en el cociente de
-        verosimilitudes bajo el supuesto de normalidad; son estadísticos distintos
-        que en este caso conducen a la misma decisión.
+        esperada, puesto que Levene se apoya en las desviaciones absolutas 
+        respecto de la media y Bartlett en el cociente de verosimilitudes bajo 
+        el supuesto de normalidad que en este caso conducen a la misma decisión.
 
-        \begin{figure*}[!t]
+        \vspace{10pt}
+
+        Las nueve figuras se replicaron íntegramente con ggplot2 sobre los estadísticos 
+        recalculados en R. A continuación, cuatro de ellas demuestran que ambas cadenas 
+        de herramientas conducen a la misma lectura.
+
+        \vspace{10pt}
+
+        La primera réplica en R verifica el supuesto de normalidad mediante un
+        histograma equivalente al de Python. Ambas herramientas producen la misma
+        conclusión visual: la distribución se alinea con la curva normal teórica.
+
+        \begin{figure}[H]
             \centering
-            \includegraphics[width=0.485\linewidth]{assets/images/figures/r/hypothesis/histograma_normalidad.png}
-            \hfill
-            \includegraphics[width=0.485\linewidth]{assets/images/figures/r/hypothesis/medias_ic95.png}
+            \includegraphics[width=0.95\linewidth]{assets/images/figures/r/hypothesis/histograma_normalidad.png}
+            \caption{Réplica en ggplot2: verificación de normalidad del sector
+            Residencial}
+            \label{fig_r_normalidad}
+        \end{figure}
 
-            \vspace{6pt}
+        La segunda réplica presenta las medias con intervalos de confianza del 95\,\%
+        y las letras de Tukey que codifican las diferencias significativas. La
+        Figura \ref{fig_r_medias} es idéntica en estructura a la Figura
+        \ref{fig_medias}, confirmando que los tres grupos difieren entre sí sin
+        ambigüedad.
 
-            \includegraphics[width=0.485\linewidth]{assets/images/figures/r/hypothesis/tukey_forest.png}
-            \hfill
-            \caption{Cuatro de las nueve réplicas construidas con ggplot2 sobre los
-            estadísticos recalculados en R: verificación de normalidad (arriba
-            izquierda), medias con los intervalos y las letras de Tukey (arriba
-            derecha), comparaciones múltiples con ambos post-hoc (abajo izquierda)
-            y relación temperatura-consumo desagregada por sector (abajo derecha)}
-            \label{fig_ggplot}
-        \end{figure*}
-
-        Las nueve figuras se replicaron íntegramente con ggplot2
-        \cite{wickham2016ggplot2} sobre los estadísticos recalculados en R, de modo
-        que ni las cifras ni los gráficos del informe dependen de un único entorno.
-        La Figura \ref{fig_ggplot} recoge cuatro de ellas y la Figura
-        \ref{fig_ggplot_extra} el tablero completo, construido con la misma
-        gramática de gráficos y convertido en interactivo mediante
-        \texttt{ggplotly}. La comparación con las Figuras \ref{fig_forest},
-        \ref{fig_medias} y \ref{fig_dashboard} muestra que ambas cadenas de
-        herramientas producen la misma lectura: los mismos intervalos que no
-        cruzan el cero, las mismas letras de Tukey y la misma discrepancia entre
-        la correlación global y la del sector Residencial.
-
-        \begin{figure}[!htbp]
+        \begin{figure}[H]
             \centering
-            \includegraphics[width=1\linewidth]{assets/images/figures/r/hypothesis/dashboard.png}
-            \caption{Réplica en ggplot2 del tablero de la Figura
+            \includegraphics[width=0.95\linewidth]{assets/images/figures/r/hypothesis/medias_ic95.png}
+            \caption{Réplica en ggplot2: consumo medio por sector con intervalos de
+            confianza del 95\,\% y letras de Tukey}
+            \label{fig_r_medias}
+        \end{figure}
+
+        La tercera réplica muestra las comparaciones múltiples con ambos post-hoc:
+        Tukey (punteado) y Games-Howell (sólido). Este forest plot es la traducción
+        gráfica de la Tabla \ref{robustez}, permitiendo ver de un vistazo que ambos
+        métodos conducen a la misma decisión: ningún intervalo cruza el cero.
+
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.95\linewidth]{assets/images/figures/r/hypothesis/tukey_forest.png}
+            \caption{Réplica en ggplot2: comparaciones múltiples de Tukey y
+            Games-Howell}
+            \label{fig_r_forest}
+        \end{figure}
+
+        La coincidencia dígito a dígito entre estas tres réplicas en R y sus
+        homólogas en Python (Figuras \ref{fig_normalidad}, \ref{fig_medias} y
+        \ref{fig_forest}) demuestra que ni las cifras ni los gráficos dependen de
+        un único entorno. Los mismos datos procesados en dos lenguajes distintos
+        producen exactamente el mismo resultado, lo que constituye el nivel más
+        alto de garantía sobre la exactitud de los cálculos.
+
+        \clearpage
+
+        \begin{strip}
+            \centering
+            \includegraphics[width=0.90\linewidth]{assets/images/figures/r/hypothesis/dashboard.png}
+            \captionof{figure}{Réplica en ggplot2 del tablero de la Figura
             \ref{fig_dashboard}, compuesta en una retícula de cuatro paneles y
             exportada también como versión interactiva mediante \texttt{ggplotly}}
             \label{fig_ggplot_extra}
-        \end{figure}
+        \end{strip}
 
     \subsection{Limitaciones}
         Tres advertencias delimitan el alcance de los resultados. La primera es que
