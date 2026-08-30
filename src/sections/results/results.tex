@@ -1,9 +1,8 @@
 \section{Resultados}
     \subsection{Verificación de supuestos}
-        La Tabla \ref{supuestos} recoge el contraste de las dos primeras hipótesis.
-        Los tres sectores superan la prueba de normalidad con holgura, lo que
-        habilita el uso de pruebas paramétricas; la homogeneidad de varianzas, en
-        cambio, se rechaza de forma contundente.
+        La Tabla \ref{supuestos} resume las dos primeras hipótesis. Los tres sectores 
+        cumplen el supuesto de normalidad, lo que permite emplear pruebas paramétricas, 
+        en cambio, la homogeneidad de varianzas se rechaza de forma contundente.
 
         \begin{table}[H]
             \centering
@@ -29,11 +28,10 @@
             \end{center}
         \end{table}
 
-        La heterocedasticidad no es un defecto de los datos sino una propiedad del
-        fenómeno: la desviación estándar crece con la escala del sector, de 40,6 kWh
-        en Residencial a 195,3 en Industrial. La consecuencia metodológica es
-        inmediata, la comparación de medias debe ejecutarse con la corrección de
-        Welch y no con la prueba t clásica.
+        La heterocedasticidad se evidencia en el aumento de la desviación 
+        estándar, de 40,6 kWh en Residencial a 195,3 kWh en Industrial, 
+        por ello, la comparación de medias se realiza mediante la corrección 
+        de Welch.
 
         \begin{figure}[!htbp]
             \centering
@@ -43,29 +41,25 @@
             \label{fig_normalidad}
         \end{figure}
 
-        La Figura \ref{fig_normalidad} muestra por qué el contraste de normalidad
-        conviene leerse acompañado de su gráfico: el valor $p$ de 0,7628 informa que
-        no hay evidencia contra $H_0$, pero es el ajuste visual entre el histograma
-        y la campana teórica lo que confirma que la coincidencia es real y no el
-        resultado de una prueba con poca potencia.
+        La Figura \ref{fig_normalidad} muestra un comportamiento compatible con 
+        la normalidad. El valor $p=0,7628$ no permite rechazar $H_0$, mientras 
+        que la correspondencia entre el histograma y la distribución normal teórica 
+        respalda gráficamente este resultado.
 
-        \begin{figure*}[!t]
+        \begin{strip}
             \centering
             \includegraphics[width=0.94\linewidth]{assets/images/figures/python/fig6_qqplots_normalidad.png}
-            \caption{Diagnóstico gráfico de normalidad en los tres sectores mediante
+            \captionof{figure}{Diagnóstico gráfico de normalidad en los tres sectores mediante
             gráficos cuantil-cuantil (Matplotlib). Cada panel rotula el estadístico
             $W$ de Shapiro-Wilk y su valor $p$}
             \label{fig_qq}
-        \end{figure*}
+        \end{strip}
 
-        El histograma resuelve bien el centro de la distribución pero pierde
-        resolución en las colas, que es justamente donde una desviación de la
-        normalidad comprometería la validez de las pruebas paramétricas. La Figura
-        \ref{fig_qq} audita ese tramo: en los tres sectores los puntos se alinean
-        sobre la diagonal teórica a lo largo de todo el recorrido, sin la curvatura
-        en forma de S propia de la asimetría ni el despegue característico de las
-        colas pesadas. La normalidad queda así respaldada por dos vías
-        independientes, una analítica \cite{shapiro1965analysis} y otra gráfica.
+        El histograma representa el centro de la distribución, pero la
+        Figura \ref{fig_qq} permite evaluar mejor las colas. En los tres
+        sectores, los puntos siguen la diagonal teórica sin evidenciar asimetría
+        ni colas pesadas, respaldando la normalidad tanto gráfica como
+        analíticamente \cite{shapiro1965analysis}.
 
     \subsection{Comparación de medias}
         La Tabla \ref{ttest} presenta el contraste entre los sectores Residencial y

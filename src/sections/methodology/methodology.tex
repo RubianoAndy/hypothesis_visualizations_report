@@ -185,13 +185,12 @@
 
     \subsection{Contrastes robustos a la heterocedasticidad}
         \label{subsec_robustez}
-        Dado que la segunda hipótesis rechaza el supuesto de igualdad de
-        varianzas, el ANOVA clásico y el post-hoc de Tukey no son adecuados, por
-        ello, la comparación se repite con métodos robustos, el ANOVA de Welch,
-        que pondera los grupos mediante $w_i=n_i/s_i^2$ \cite{welch1951comparison}, 
-        y el post-hoc de Games-Howell, que emplea el error estándar de Welch 
-        para cada par y ajusta los grados de libertad mediante Welch-Satterthwaite 
-        \cite{games1976pairwise}.
+        Dado que la segunda hipótesis rechaza la igualdad de varianzas,
+        el ANOVA clásico y el post-hoc de Tukey no son adecuados, por tanto, 
+        se emplean métodos robustos: el ANOVA de Welch, que pondera los grupos
+        mediante $w_i=n_i/s_i^2$ \cite{welch1951comparison}, y el post-hoc de
+        Games-Howell, que utiliza el error estándar de Welch y los grados de
+        libertad ajustados por Welch-Satterthwaite \cite{games1976pairwise}.
 
         \begin{equation}
             F_W = \frac{\dfrac{1}{k-1}\sum w_i (\bar{x}_i - \bar{x}_w)^2}
