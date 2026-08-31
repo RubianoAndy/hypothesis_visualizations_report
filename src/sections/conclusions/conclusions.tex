@@ -1,7 +1,7 @@
 \section{Conclusiones y recomendaciones}
     \begin{itemize}
         \item El protocolo de contraste confirmó que el sector determina el consumo
-        energético de forma inequívoca, ya que el ANOVA atribuye el 83,9\,\% de la
+        energético de forma inequívoca, ya que el ANOVA atribuye el 83,9\% de la
         variabilidad a ese factor ($F = 775{,}99$; $p < 0{,}001$) y las tres
         comparaciones de Tukey resultan significativas, con diferencias de 244,3,
         456,4 y 700,7 kWh entre pares de sectores.
@@ -10,7 +10,7 @@
 
         \item La verificación de supuestos no fue un trámite sino una decisión de
         método, puesto que el rechazo de la homogeneidad de varianzas obligó a
-        emplear la corrección de Welch en la comparación de medias; omitir ese paso
+        emplear la corrección de Welch en la comparación de medias, omitir ese paso
         habría producido un valor $p$ calculado bajo un supuesto que los datos
         contradicen.
 
@@ -75,39 +75,4 @@
         que representa; las dos versiones interactivas y el tablero de cuatro paneles
         permiten además condicionar por sector sin recalcular nada, que es la
         operación exacta que separa la conclusión correcta de la equivocada.
-    \end{itemize}
-
-    \vspace{10pt}
-
-    A partir de lo anterior se derivan tres recomendaciones para la toma de
-    decisiones:
-
-    \vspace{10pt}
-
-    \begin{itemize}
-        \item \textbf{Segmentar antes de promediar.} La media global de 501,98 kWh
-        no describe a ningún cliente real, ya que se sitúa entre el sector Comercial
-        y el Residencial sin representar a ninguno. Toda tarifa, meta de eficiencia
-        o proyección de demanda debe construirse por sector, decisión que los
-        intervalos de Tukey respaldan al excluir el cero con márgenes amplios y que
-        descarta cualquier esquema tarifario de dos escalones.
-
-        \vspace{10pt}
-
-        \item \textbf{Incorporar la temperatura como variable de planeación
-        únicamente en el segmento residencial.} Es el único donde la relación es a
-        la vez significativa y de magnitud apreciable ($r = 0{,}595$), lo que la
-        vuelve útil para anticipar picos de demanda en las regiones Caribe y
-        Pacífica; extender esa conclusión al conjunto agregado carecería de
-        sustento.
-
-        \vspace{10pt}
-
-        \item \textbf{Acompañar todo contraste con su representación gráfica antes
-        de aceptar un resultado no significativo.} Este trabajo muestra que un valor
-        $p$ elevado admite dos lecturas incompatibles, la ausencia de efecto y el
-        enmascaramiento por agregación, que el estadístico no distingue y la figura
-        sí. En conjuntos reales, donde la variable responsable de la agregación
-        puede no estar registrada, esa inspección visual es la única salvaguarda
-        disponible frente a una conclusión equivocada.
     \end{itemize}
