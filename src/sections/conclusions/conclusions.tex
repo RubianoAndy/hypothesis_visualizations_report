@@ -1,4 +1,4 @@
-\section{Conclusiones y recomendaciones}
+\section{Conclusiones}
     \begin{itemize}
         \item El protocolo de contraste confirmó que el sector determina el consumo
         energético de forma inequívoca, ya que el ANOVA atribuye el 83,9\% de la
@@ -76,63 +76,3 @@
         permiten además condicionar por sector sin recalcular nada, que es la
         operación exacta que separa la conclusión correcta de la equivocada.
     \end{itemize}
-
-    \subsection{Recomendaciones para la toma de decisiones}
-        Los resultados anteriores se traducen en cinco recomendaciones
-        prácticas para quien planifique el suministro o la tarifa de energía:
-
-        \begin{enumerate}
-            \item \textbf{Analizar siempre por sector.} El sector explica el
-            84\,\% de la variabilidad del consumo. Cualquier pronóstico, tarifa
-            o meta de ahorro que mezcle los tres sectores en una sola cifra
-            ocultará las diferencias que de verdad importan.
-
-            \vspace{5pt}
-
-            \item \textbf{Usar la temperatura solo donde tiene efecto.} En el
-            sector Residencial la relación es fuerte ($r = 0{,}595$) y sirve
-            para anticipar picos de demanda en meses cálidos. En el modelo
-            agregado parece nula ($r = 0{,}063$), así que incluirla ahí
-            conduciría a descartar una variable útil.
-
-            \vspace{5pt}
-
-            \item \textbf{Dimensionar reservas con criterios distintos.} La
-            dispersión del sector Industrial (195 kWh) es casi cinco veces la
-            del Residencial (41 kWh). Los contratos de suministro y los
-            márgenes de seguridad deben reflejar esa diferencia de riesgo.
-
-            \vspace{5pt}
-
-            \item \textbf{Exigir tamaño del efecto junto al valor $p$.} Un
-            valor $p$ pequeño no dice cuánto vale una diferencia, y uno grande
-            no prueba que no exista. Reportar $d$, $\omega^2$ y la potencia
-            evita decidir sobre efectos triviales o descartar efectos reales.
-
-            \vspace{5pt}
-
-            \item \textbf{Ver antes de concluir.} Ninguna decisión de ``no hay
-            relación'' debería aceptarse sin una figura desagregada. En este
-            caso, la Figura \ref{fig_plotly} bastó para detectar lo que el
-            coeficiente global escondía.
-        \end{enumerate}
-
-        \vspace{10pt}
-
-        El código completo, las tablas y las figuras interactivas en HTML
-        están disponibles en el repositorio del proyecto:
-
-        \begin{center}
-            \begin{tcolorbox}[
-                arc=0pt, boxrule=0.8pt,
-                colback=white, colframe=green!45!black,
-                colbacktitle=green!45!black, coltitle=white,
-                fonttitle=\bfseries,
-                title=Repositorio del proyecto en GitHub,
-                halign=center, halign title=center,
-                width=0.92\linewidth
-            ]
-                \small
-                \url{https://github.com/RubianoAndy/hypothesis_visualizations}
-            \end{tcolorbox}
-        \end{center}
