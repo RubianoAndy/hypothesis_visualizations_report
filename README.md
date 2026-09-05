@@ -104,11 +104,12 @@ Es decir, **el estimador del efecto sobrevive a la agregación; la medida de aso
 | I | Introducción | Qué mide y qué no mide un valor *p*; el cuarteto de Anscombe y la agregación de subpoblaciones como marco |
 | II | Metodología | Conjunto de datos (**Tabla I**), diseño del contraste (**Tabla II**), tamaño del efecto y potencia, contrastes robustos, y el **plan de visualización** que mapea cada hipótesis a su figura y biblioteca (**Tabla III**) — **11 ecuaciones** |
 | III | Resultados | Supuestos con Q-Q, prueba t, ANOVA + Tukey, **tamaños de efecto y potencia**, **robustez con Welch y Games-Howell**, y regresión — **Tablas IV–X** y **Figuras 1–6** |
-| IV | El papel de la visualización | La figura interactiva (**Figura 7**), la identidad *r = b₁·s_T/s_Y* descompuesta (**Figura 8**), el *dashboard* (**Figura 9**), la verificación cruzada con las réplicas en ggplot2 (**Figuras 10–11**) y las limitaciones |
-| V | Conclusiones | Ocho conclusiones y tres recomendaciones para la toma de decisiones |
+| IV | El papel de la visualización | La figura interactiva (**Figura 7**), la identidad *r = b₁·s_T/s_Y* descompuesta (**Figura 8**), el *dashboard* (**Figura 9**), la verificación cruzada con las réplicas en ggplot2 (**Figuras 10–13**) y las limitaciones |
+| V | Conclusiones | Ocho conclusiones sobre el protocolo de contraste, la robustez y la verificación cruzada |
+| VI | Recomendaciones | Cinco recomendaciones para la toma de decisiones y el enlace al repositorio del proyecto |
 | A | Anexo · Python | Las cinco pruebas con SciPy y statsmodels, el ANOVA de Welch y Games-Howell implementados desde sus fórmulas, y la figura de Plotly |
 | B | Anexo · R | El recálculo independiente con `shapiro.test`, `t.test`, `aov`, `TukeyHSD`, `cor.test`, `lm` y `oneway.test`, más los efectos y Games-Howell sobre `ptukey` |
-| — | Referencias | 24 entradas en formato IEEE |
+| — | Referencias | 16 entradas en formato IEEE |
 
 ### Las cinco hipótesis contrastadas
 
@@ -138,6 +139,72 @@ Es decir, **el estimador del efecto sobrevive a la agregación; la medida de aso
 | **$r_{mín}$ detectable** (n = 300) | 0,161 | — | El *r* global queda **por debajo** del umbral |
 
 Todos los estadísticos coinciden **dígito a dígito** entre Python y R, incluidos los tamaños de efecto, la potencia y Games-Howell —que no existen en `scipy`/`statsmodels` ni en R base y se implementaron de cero en cada entorno, lo que hace la verificación más exigente que comparar dos bibliotecas del mismo algoritmo. La única discrepancia esperada es Levene vs. Bartlett, por tratarse de pruebas distintas que aquí conducen a la misma decisión.
+
+---
+
+## 🖼️ Galería de Figuras
+
+Las 13 figuras del informe, en el orden en que aparecen citadas en el texto.
+
+### Sección III · Resultados (Figuras 1–6, Python)
+
+| | |
+|---|---|
+| ![Figura 1](assets/images/figures/python/hypothesis/histograma_normalidad.png) | ![Figura 3](assets/images/figures/python/hypothesis/boxplot_sectores.png) |
+| **Figura 1 · Normalidad (Matplotlib)** — histograma del sector Residencial con la densidad normal teórica superpuesta | **Figura 3 · Violín y caja por sector (seaborn)** — distribución del consumo por sector, con el ANOVA y su η² rotulados |
+| ![Figura 4](assets/images/figures/python/hypothesis/medias_ic95.png) | ![Figura 6](assets/images/figures/python/hypothesis/regresion_temperatura.png) |
+| **Figura 4 · Medias con IC del 95 % (Matplotlib)** — las letras (a), (b) y (c) codifican Tukey: letras distintas significan diferencia significativa | **Figura 6 · Regresión agregada (seaborn)** — temperatura vs. consumo con la recta OLS, su banda de confianza y el contraste de Pearson |
+
+<div align="center">
+    <img src="assets/images/figures/python/hypothesis/qqplots_normalidad.png" width="900" alt="Q-Q plots por sector">
+</div>
+
+**Figura 2 · Q-Q plots por sector (Matplotlib)** — diagnóstico gráfico de normalidad en los tres sectores, cada panel rotula el estadístico *W* de Shapiro-Wilk y su valor *p*.
+
+<div align="center">
+    <img src="assets/images/figures/python/hypothesis/tukey_forest.png" width="820" alt="Forest plot de Tukey frente a Games-Howell">
+</div>
+
+**Figura 5 · Tukey HSD frente a Games-Howell (Matplotlib)** — intervalos de confianza del 95 % de ambos post-hoc; las diferencias puntuales son idénticas, cambia la precisión.
+
+### Sección IV · El papel de la visualización (Figuras 7–9, Python)
+
+<div align="center">
+    <img src="assets/images/figures/python/hypothesis/dispersion_sectores.png" width="820" alt="Consumo vs temperatura por sector">
+</div>
+
+**Figura 7 · Consumo vs. temperatura por sector (Plotly)** — versión estática de la figura interactiva; tres rectas de regresión paralelas y de pendiente positiva, separadas por el nivel de cada sector.
+
+<div align="center">
+    <img src="assets/images/figures/python/hypothesis/atenuacion.png" width="900" alt="Descomposición de la atenuación por agregación">
+</div>
+
+**Figura 8 · Descomposición de la atenuación (seaborn)** — los tres paneles descomponen la identidad *r = b₁·s_T/s_Y*: la pendiente global se mantiene cerca del valor de diseño, la desviación del consumo se multiplica por casi ocho al mezclar sectores y la correlación se desploma en la misma proporción.
+
+<div align="center">
+    <img src="assets/images/figures/python/hypothesis/dashboard.png" width="900" alt="Dashboard de cuatro paneles en Plotly">
+</div>
+
+**Figura 9 · Dashboard del protocolo de contraste (Plotly)** — versión estática del tablero interactivo que reúne las cuatro decisiones del protocolo en una sola vista.
+
+### Verificación cruzada · Réplicas en ggplot2 (Figuras 10–13, R)
+
+| | |
+|---|---|
+| ![Figura 10](assets/images/figures/r/hypothesis/histograma_normalidad.png) | ![Figura 11](assets/images/figures/r/hypothesis/medias_ic95.png) |
+| **Figura 10 · Réplica en ggplot2** — verificación de normalidad del sector Residencial | **Figura 11 · Réplica en ggplot2** — consumo medio por sector con IC del 95 % y letras de Tukey |
+
+<div align="center">
+    <img src="assets/images/figures/r/hypothesis/tukey_forest.png" width="820" alt="Forest plot en ggplot2">
+</div>
+
+**Figura 12 · Réplica en ggplot2** — comparaciones múltiples de Tukey y Games-Howell.
+
+<div align="center">
+    <img src="assets/images/figures/r/hypothesis/dashboard.png" width="900" alt="Dashboard replicado en ggplot2">
+</div>
+
+**Figura 13 · Réplica en ggplot2 del tablero de la Figura 9** — compuesta en una retícula de cuatro paneles y exportada también como versión interactiva mediante `ggplotly`.
 
 ---
 
@@ -204,13 +271,13 @@ La Figura 5 usa `figure*[!t]`, el flotante de doble columna de IEEE, porque es l
 
 ## 📋 Estado del Documento
 
-El informe está **terminado**: compila en **15 páginas** —10 de cuerpo y 5 de anexos de código y referencias— sin desbordes de caja y sin referencias ni citas sin resolver.
+El informe está **terminado**: compila en **14 páginas** —10 de cuerpo y 4 de anexos de código y referencias— sin desbordes de caja y sin referencias ni citas sin resolver.
 
-- ✅ **11 figuras** referenciadas desde el texto (Matplotlib, seaborn, Plotly y ggplot2), cada una con su estadístico impreso
+- ✅ **13 figuras** referenciadas desde el texto (Matplotlib, seaborn, Plotly y ggplot2), cada una con su estadístico impreso
 - ✅ **12 tablas** con las cifras reales de la ejecución
 - ✅ **12 ecuaciones** numeradas y referenciadas
 - ✅ **2 anexos** con el núcleo estadístico de ambos scripts, extraídos automáticamente del código real
-- ✅ Bibliografía IEEE con **24 referencias**
+- ✅ Bibliografía IEEE con **16 referencias**
 - ✅ Compilación limpia: sin `Overfull`, sin `Underfull \hbox`/`\vbox` y sin referencias ni citas indefinidas
 
 ---
