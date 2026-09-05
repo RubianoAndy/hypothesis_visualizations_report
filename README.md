@@ -20,7 +20,7 @@
 | **Programa** | Maestría en Inteligencia Artificial |
 | **Universidad** | Universidad de La Salle |
 | **Formato** | Artículo IEEE conference (`IEEEtran`, dos columnas) |
-| **Extensión** | 15 páginas: 10 de cuerpo y 5 de anexos de código y referencias |
+| **Extensión** | 14 páginas: 10 de cuerpo y 4 de anexos de código y referencias |
 | **Año** | 2026 |
 | **Estado** | Completado |
 
@@ -68,8 +68,9 @@ Es decir, **el estimador del efecto sobrevive a la agregación; la medida de aso
 │   │   ├── introduction/             # I. Introducción
 │   │   ├── methodology/              # II. Metodología
 │   │   ├── results/                  # III. Resultados
-│   │   ├── discussion/               # IV. El papel de la visualización
-│   │   └── conclusions/              # V. Conclusiones y recomendaciones
+│   │   ├── discussion/                # IV. El papel de la visualización
+│   │   ├── conclusions/               # V. Conclusiones
+│   │   └── recommendations/           # VI. Recomendaciones (con el enlace al repositorio)
 │   └── appendices/
 │       ├── python-code/              # Anexo A: núcleo estadístico en Python
 │       └── r-code/                   # Anexo B: núcleo estadístico en R
@@ -81,7 +82,7 @@ Es decir, **el estimador del efecto sobrevive a la agregación; la medida de aso
 │   │   ├── plotly_figure.py                   # Construcción de la figura interactiva
 │   │   └── hypothesis_testing_core.R          # Recálculo independiente en R base
 │   └── references/
-│       └── references.bib            # Bibliografía IEEE (24 referencias)
+│       └── references.bib            # Bibliografía IEEE (16 referencias citadas)
 └── build/                            # Artefactos de compilación LaTeX (generado)
 ```
 
